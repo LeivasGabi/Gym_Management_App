@@ -1,5 +1,6 @@
 package gym.management.data.repository
 
+import com.google.firebase.auth.FirebaseAuth
 import gym.management.data.source.FirestoreCollections
 import gym.management.domain.model.Student
 import gym.management.domain.repository.StudentRepository
@@ -10,19 +11,20 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class StudentRepositoryImpl(
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 ) : StudentRepository {
 
     private val collection = firestore.collection(FirestoreCollections.STUDENTS)
 
     override fun observeAll(): Flow<List<Student>> = callbackFlow {
-        val listener = collection.addSnapshotListener { snapshot, error ->
+        val userId = auth.currentUser?.uid ?: run { trySend(emptyList()); close(); return@callbackFlow }
+        val listener = collection.whereEqualTo("userId", userId).addSnapshotListener { snapshot, error ->
             if (error != null) {
                 close(error)
                 return@addSnapshotListener
             }
-            val students = snapshot?.toObjects(Student::class.java) ?: emptyList()
-            trySend(students)
+            trySend(snapshot?.toObjects(Student::class.java) ?: emptyList())
         }
         awaitClose { listener.remove() }
     }

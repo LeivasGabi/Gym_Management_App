@@ -32,6 +32,32 @@
     <fragment
         android:id="@+id/mainMenuFragment"
         android:name="gym.management.presentation.mainmenu.MainMenuFragment"
-        android:label="Main Menu" />
+        android:label="Main Menu">
+        <action
+            android:id="@+id/action_mainMenu_to_registerSelection"
+            app:destination="@id/registerSelectionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerSelectionFragment"
+        android:name="gym.management.presentation.register.selection.RegisterSelectionFragment"
+        android:label="Cadastrar">
+        <action
+            android:id="@+id/action_registerSelection_to_registerStudent"
+            app:destination="@id/registerStudentFragment" />
+        <action
+            android:id="@+id/action_registerSelection_to_registerModality"
+            app:destination="@id/registerModalityFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerStudentFragment"
+        android:name="gym.management.presentation.register.student.RegisterStudentFragment"
+        android:label="Cadastrar Aluno" />
+
+    <fragment
+        android:id="@+id/registerModalityFragment"
+        android:name="gym.management.presentation.register.modality.RegisterModalityFragment"
+        android:label="Cadastrar Modalidade" />
 
 </navigation>

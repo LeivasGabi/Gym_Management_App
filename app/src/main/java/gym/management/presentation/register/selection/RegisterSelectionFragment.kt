@@ -1,4 +1,4 @@
-package gym.management.presentation.mainmenu
+package gym.management.presentation.register.selection
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import gym.management.R
 import gym.management.ui.theme.GymManagementAppTheme
 
-class MainMenuFragment : Fragment() {
+class RegisterSelectionFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,19 +21,14 @@ class MainMenuFragment : Fragment() {
         setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         setContent {
             GymManagementAppTheme {
-                MainMenuScreen(
-                    onStudentsClick = {
-                        // TODO: navegar para tela de alunos
+                RegisterSelectionScreen(
+                    onStudentClick = {
+                        findNavController().navigate(R.id.action_registerSelection_to_registerStudent)
                     },
-                    onRegisterClick = {
-                        findNavController().navigate(R.id.action_mainMenu_to_registerSelection)
+                    onModalityClick = {
+                        findNavController().navigate(R.id.action_registerSelection_to_registerModality)
                     },
-                    onPaymentsClick = {
-                        // TODO: navegar para tela de pagamentos
-                    },
-                    onModalitiesClick = {
-                        // TODO: navegar para tela de modalidades
-                    }
+                    onNavigateBack = { findNavController().popBackStack() }
                 )
             }
         }

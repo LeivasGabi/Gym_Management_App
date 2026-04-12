@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.ElevatedCard
@@ -32,7 +33,8 @@ import androidx.compose.ui.unit.dp
 fun MainMenuScreen(
     onStudentsClick: () -> Unit,
     onRegisterClick: () -> Unit,
-    onPaymentsClick: () -> Unit
+    onPaymentsClick: () -> Unit,
+    onModalitiesClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -69,14 +71,14 @@ fun MainMenuScreen(
             MenuCard(
                 icon = Icons.Default.Group,
                 title = "Alunos",
-                subtitle = "Gerenciar alunos cadastrados",
+                subtitle = "Gerencie notas e visualize o perfil",
                 onClick = onStudentsClick
             )
 
             MenuCard(
                 icon = Icons.Default.PersonAdd,
-                title = "Registrar",
-                subtitle = "Cadastrar novo aluno",
+                title = "Cadastrar",
+                subtitle = "Cadastrar novo aluno ou modalidade",
                 onClick = onRegisterClick
             )
 
@@ -85,6 +87,13 @@ fun MainMenuScreen(
                 title = "Pagamentos",
                 subtitle = "Gerenciar pagamentos",
                 onClick = onPaymentsClick
+            )
+
+            MenuCard(
+                icon = Icons.Default.FitnessCenter,
+                title = "Modalidades",
+                subtitle = "Visualize as modalidades cadastradas",
+                onClick = onModalitiesClick
             )
         }
     }
