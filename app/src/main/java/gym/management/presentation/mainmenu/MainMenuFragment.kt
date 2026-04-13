@@ -23,7 +23,7 @@ class MainMenuFragment : Fragment() {
             GymManagementAppTheme {
                 MainMenuScreen(
                     onStudentsClick = {
-                        // TODO: navegar para tela de alunos
+                        findNavController().navigate(R.id.action_mainMenu_to_studentList)
                     },
                     onRegisterClick = {
                         findNavController().navigate(R.id.action_mainMenu_to_registerSelection)

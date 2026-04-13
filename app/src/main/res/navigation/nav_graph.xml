@@ -36,7 +36,33 @@
         <action
             android:id="@+id/action_mainMenu_to_registerSelection"
             app:destination="@id/registerSelectionFragment" />
+        <action
+            android:id="@+id/action_mainMenu_to_studentList"
+            app:destination="@id/studentListFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/studentListFragment"
+        android:name="gym.management.presentation.students.StudentListFragment"
+        android:label="Alunos">
+        <action
+            android:id="@+id/action_studentList_to_studentDetail"
+            app:destination="@id/studentDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/studentDetailFragment"
+        android:name="gym.management.presentation.students.detail.StudentDetailFragment"
+        android:label="Aluno">
+        <action
+            android:id="@+id/action_studentDetail_to_studentProfile"
+            app:destination="@id/studentProfileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/studentProfileFragment"
+        android:name="gym.management.presentation.students.detail.StudentProfileFragment"
+        android:label="Perfil" />
 
     <fragment
         android:id="@+id/registerSelectionFragment"
