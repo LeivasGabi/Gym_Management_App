@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_mainMenu_to_studentList"
             app:destination="@id/studentListFragment" />
+        <action
+            android:id="@+id/action_mainMenu_to_modalityList"
+            app:destination="@id/modalityListFragment" />
     </fragment>
 
     <fragment
@@ -85,5 +88,19 @@
         android:id="@+id/registerModalityFragment"
         android:name="gym.management.presentation.register.modality.RegisterModalityFragment"
         android:label="Cadastrar Modalidade" />
+
+    <fragment
+        android:id="@+id/modalityListFragment"
+        android:name="gym.management.presentation.modalities.ModalityListFragment"
+        android:label="Modalidades">
+        <action
+            android:id="@+id/action_modalityList_to_modalityStudents"
+            app:destination="@id/modalityStudentsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/modalityStudentsFragment"
+        android:name="gym.management.presentation.modalities.ModalityStudentsFragment"
+        android:label="Alunos da Modalidade" />
 
 </navigation>

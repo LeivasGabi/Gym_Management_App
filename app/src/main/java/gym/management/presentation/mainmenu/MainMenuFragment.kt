@@ -32,7 +32,7 @@ class MainMenuFragment : Fragment() {
                         // TODO: navegar para tela de pagamentos
                     },
                     onModalitiesClick = {
-                        // TODO: navegar para tela de modalidades
+                        findNavController().navigate(R.id.action_mainMenu_to_modalityList)
                     }
                 )
             }
