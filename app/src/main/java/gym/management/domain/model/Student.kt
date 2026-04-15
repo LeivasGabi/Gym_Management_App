@@ -7,7 +7,9 @@ data class Student(
     val phone: String = "",
     val address: String = "",
     val birthDate: String = "",
+    val emergencyContactName: String = "",
     val emergencyContact: String = "",
+    val paymentDay: Int = 0,
     val modalityIds: List<String> = emptyList(),
     val active: Boolean = true,
     val registrationDate: Long = System.currentTimeMillis()

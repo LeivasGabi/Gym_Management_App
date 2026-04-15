@@ -10,6 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import gym.management.R
+import gym.management.presentation.graduation.GraduationFragment
 import gym.management.ui.theme.GymManagementAppTheme
 
 class StudentDetailFragment : Fragment() {
@@ -28,7 +29,13 @@ class StudentDetailFragment : Fragment() {
                 StudentDetailScreen(
                     studentName = studentName,
                     onNotesClick = {
-                        // TODO: navegar para tela de notas
+                        findNavController().navigate(
+                            R.id.action_studentDetail_to_graduation,
+                            bundleOf(
+                                GraduationFragment.ARG_STUDENT_ID to studentId,
+                                GraduationFragment.ARG_STUDENT_NAME to studentName
+                            )
+                        )
                     },
                     onProfileClick = {
                         findNavController().navigate(

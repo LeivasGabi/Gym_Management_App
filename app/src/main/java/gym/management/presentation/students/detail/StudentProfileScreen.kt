@@ -14,12 +14,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -41,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import gym.management.domain.model.Modality
 import gym.management.domain.model.Student
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +56,7 @@ fun StudentProfileScreen(
     saveState: SaveState,
     onBackClick: () -> Unit,
     onToggleActive: (Boolean) -> Unit,
-    onSave: (phone: String, address: String, emergencyContact: String) -> Unit,
+    onSave: (phone: String, address: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>) -> Unit,
     onSaveHandled: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -129,6 +135,7 @@ fun StudentProfileScreen(
             is StudentProfileUiState.Success -> {
                 StudentProfileContent(
                     student = uiState.student,
+                    availableModalities = uiState.availableModalities,
                     isSaving = saveState is SaveState.Loading,
                     onToggleActive = onToggleActive,
                     onSave = onSave,
@@ -139,17 +146,23 @@ fun StudentProfileScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StudentProfileContent(
     student: Student,
+    availableModalities: List<Modality>,
     isSaving: Boolean,
     onToggleActive: (Boolean) -> Unit,
-    onSave: (phone: String, address: String, emergencyContact: String) -> Unit,
+    onSave: (phone: String, address: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var phone by rememberSaveable(student.phone) { mutableStateOf(student.phone) }
     var address by rememberSaveable(student.address) { mutableStateOf(student.address) }
+    var emergencyContactName by rememberSaveable(student.emergencyContactName) { mutableStateOf(student.emergencyContactName) }
     var emergencyContact by rememberSaveable(student.emergencyContact) { mutableStateOf(student.emergencyContact) }
+    var paymentDay by rememberSaveable(student.paymentDay) { mutableStateOf(student.paymentDay) }
+    var paymentDayExpanded by remember { mutableStateOf(false) }
+    var selectedModalityIds by rememberSaveable(student.modalityIds) { mutableStateOf(student.modalityIds.toSet()) }
 
     Column(
         modifier = modifier
@@ -180,16 +193,101 @@ private fun StudentProfileContent(
             singleLine = true
         )
 
+        HorizontalDivider()
+
+        Text(
+            text = "Contato de Emergência",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
         OutlinedTextField(
-            value = emergencyContact,
-            onValueChange = { emergencyContact = it },
-            label = { Text("Contato de emergência") },
+            value = emergencyContactName,
+            onValueChange = { emergencyContactName = it },
+            label = { Text("Nome do contato") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
 
+        OutlinedTextField(
+            value = emergencyContact,
+            onValueChange = { emergencyContact = it },
+            label = { Text("Telefone do contato") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        HorizontalDivider()
+
+        ExposedDropdownMenuBox(
+            expanded = paymentDayExpanded,
+            onExpandedChange = { paymentDayExpanded = it }
+        ) {
+            OutlinedTextField(
+                value = if (paymentDay == 0) "" else "Todo dia $paymentDay",
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Dia de pagamento") },
+                placeholder = { Text("Selecione o dia") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = paymentDayExpanded) },
+                modifier = Modifier
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    .fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = paymentDayExpanded,
+                onDismissRequest = { paymentDayExpanded = false }
+            ) {
+                (1..31).forEach { day ->
+                    DropdownMenuItem(
+                        text = { Text("Todo dia $day") },
+                        onClick = {
+                            paymentDay = day
+                            paymentDayExpanded = false
+                        }
+                    )
+                }
+            }
+        }
+
+        if (availableModalities.isNotEmpty()) {
+            HorizontalDivider()
+
+            Text(
+                text = "Modalidades",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            availableModalities.forEach { modality ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Checkbox(
+                        checked = modality.id in selectedModalityIds,
+                        onCheckedChange = { checked ->
+                            selectedModalityIds = if (checked) {
+                                selectedModalityIds + modality.id
+                            } else {
+                                selectedModalityIds - modality.id
+                            }
+                        }
+                    )
+                    Text(
+                        text = modality.name,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        }
+
         Button(
-            onClick = { onSave(phone, address, emergencyContact) },
+            onClick = {
+                onSave(phone, address, emergencyContactName, emergencyContact, paymentDay, selectedModalityIds.toList())
+            },
             enabled = !isSaving,
             modifier = Modifier.fillMaxWidth()
         ) {
