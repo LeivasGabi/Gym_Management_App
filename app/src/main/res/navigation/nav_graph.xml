@@ -42,7 +42,15 @@
         <action
             android:id="@+id/action_mainMenu_to_modalityList"
             app:destination="@id/modalityListFragment" />
+        <action
+            android:id="@+id/action_mainMenu_to_payments"
+            app:destination="@id/paymentFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/paymentFragment"
+        android:name="gym.management.presentation.payment.PaymentFragment"
+        android:label="Pagamentos" />
 
     <fragment
         android:id="@+id/studentListFragment"
@@ -60,7 +68,15 @@
         <action
             android:id="@+id/action_studentDetail_to_studentProfile"
             app:destination="@id/studentProfileFragment" />
+        <action
+            android:id="@+id/action_studentDetail_to_graduation"
+            app:destination="@id/graduationFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/graduationFragment"
+        android:name="gym.management.presentation.graduation.GraduationFragment"
+        android:label="Graduação" />
 
     <fragment
         android:id="@+id/studentProfileFragment"

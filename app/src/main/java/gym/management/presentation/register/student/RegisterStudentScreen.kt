@@ -18,10 +18,14 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -50,7 +54,7 @@ fun RegisterStudentScreen(
     uiState: RegisterStudentUiState,
     modalities: List<Modality>,
     modalitiesLoaded: Boolean,
-    onSaveClick: (name: String, phone: String, address: String, birthDate: String, emergencyContact: String, modalityIds: List<String>) -> Unit,
+    onSaveClick: (name: String, phone: String, address: String, birthDate: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>) -> Unit,
     onSuccess: () -> Unit,
     onErrorShown: () -> Unit,
     onNavigateBack: () -> Unit,
@@ -60,7 +64,10 @@ fun RegisterStudentScreen(
     var phone by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf(TextFieldValue("")) }
+    var emergencyContactName by remember { mutableStateOf("") }
     var emergencyContact by remember { mutableStateOf("") }
+    var paymentDay by remember { mutableStateOf(0) }
+    var paymentDayExpanded by remember { mutableStateOf(false) }
     var selectedModalityIds by remember { mutableStateOf(setOf<String>()) }
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -167,13 +174,52 @@ fun RegisterStudentScreen(
             )
 
             OutlinedTextField(
+                value = emergencyContactName,
+                onValueChange = { emergencyContactName = it },
+                label = { Text("Nome do Contato de Emergência") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
                 value = emergencyContact,
                 onValueChange = { emergencyContact = it },
-                label = { Text("Contato de Emergência") },
+                label = { Text("Telefone do Contato de Emergência") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
+
+            ExposedDropdownMenuBox(
+                expanded = paymentDayExpanded,
+                onExpandedChange = { paymentDayExpanded = it }
+            ) {
+                OutlinedTextField(
+                    value = if (paymentDay == 0) "" else "Todo dia $paymentDay",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Dia de pagamento") },
+                    placeholder = { Text("Selecione o dia") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = paymentDayExpanded) },
+                    modifier = Modifier
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                        .fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = paymentDayExpanded,
+                    onDismissRequest = { paymentDayExpanded = false }
+                ) {
+                    (1..31).forEach { day ->
+                        DropdownMenuItem(
+                            text = { Text("Todo dia $day") },
+                            onClick = {
+                                paymentDay = day
+                                paymentDayExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
 
             if (modalities.isNotEmpty()) {
                 Text(
@@ -209,7 +255,7 @@ fun RegisterStudentScreen(
 
             Button(
                 onClick = {
-                    onSaveClick(name, phone, address, birthDate.text, emergencyContact, selectedModalityIds.toList())
+                    onSaveClick(name, phone, address, birthDate.text, emergencyContactName, emergencyContact, paymentDay, selectedModalityIds.toList())
                 },
                 enabled = uiState !is RegisterStudentUiState.Loading && name.isNotBlank(),
                 modifier = Modifier

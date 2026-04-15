@@ -29,7 +29,7 @@ class MainMenuFragment : Fragment() {
                         findNavController().navigate(R.id.action_mainMenu_to_registerSelection)
                     },
                     onPaymentsClick = {
-                        // TODO: navegar para tela de pagamentos
+                        findNavController().navigate(R.id.action_mainMenu_to_payments)
                     },
                     onModalitiesClick = {
                         findNavController().navigate(R.id.action_mainMenu_to_modalityList)

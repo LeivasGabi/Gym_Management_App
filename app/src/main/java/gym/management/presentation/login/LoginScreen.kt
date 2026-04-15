@@ -1,6 +1,7 @@
 package gym.management.presentation.login
 
-import androidx.compose.foundation.background
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -36,8 +36,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -85,24 +86,27 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // TODO: substituir pelo asset da logo real
-                Box(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                        contentDescription = "Logo do app",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(72.dp)
-                    )
+                val context = LocalContext.current
+                val logoBitmap = remember {
+                    val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                    BitmapFactory.decodeResource(context.resources, R.drawable.logo_gkj_png_branco, opts)
+                    var sample = 1
+                    while (maxOf(opts.outWidth, opts.outHeight) / sample > 600) sample *= 2
+                    BitmapFactory.decodeResource(
+                        context.resources,
+                        R.drawable.logo_gkj_png_branco,
+                        BitmapFactory.Options().apply { inSampleSize = sample }
+                    ).asImageBitmap()
                 }
+                Image(
+                    bitmap = logoBitmap,
+                    contentDescription = "Logo Grupo Kiol Jong",
+                    modifier = Modifier.size(140.dp),
+                    contentScale = ContentScale.Fit
+                )
 
                 Text(
-                    text = "Gym Manager",
+                    text = "Grupo Kiol Jong",
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary

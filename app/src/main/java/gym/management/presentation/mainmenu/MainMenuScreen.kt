@@ -41,7 +41,7 @@ fun MainMenuScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Gym Manager",
+                        text = "Grupo Kiol Jong",
                         fontWeight = FontWeight.Bold
                     )
                 },

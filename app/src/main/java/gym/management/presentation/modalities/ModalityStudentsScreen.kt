@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import gym.management.domain.model.Student
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,8 +110,8 @@ fun ModalityStudentsScreen(
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(uiState.students, key = { it.id }) { student ->
-                            StudentItem(student = student)
+                        items(uiState.students, key = { it.student.id }) { item ->
+                            StudentItem(item = item)
                         }
                     }
                 }
@@ -122,19 +121,26 @@ fun ModalityStudentsScreen(
 }
 
 @Composable
-private fun StudentItem(student: Student) {
+private fun StudentItem(item: StudentWithLatestBelt) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
-                text = student.name,
+                text = item.student.name,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
+            if (item.latestBelt != null) {
+                Text(
+                    text = item.latestBelt,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }

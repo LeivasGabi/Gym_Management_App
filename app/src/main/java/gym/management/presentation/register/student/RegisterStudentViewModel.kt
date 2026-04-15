@@ -41,7 +41,9 @@ class RegisterStudentViewModel(
         phone: String,
         address: String,
         birthDate: String,
+        emergencyContactName: String,
         emergencyContact: String,
+        paymentDay: Int,
         modalityIds: List<String>
     ) {
         viewModelScope.launch {
@@ -53,7 +55,9 @@ class RegisterStudentViewModel(
                 phone = phone,
                 address = address,
                 birthDate = birthDate,
+                emergencyContactName = emergencyContactName,
                 emergencyContact = emergencyContact,
+                paymentDay = paymentDay,
                 modalityIds = modalityIds
             )
             _uiState.value = studentRepository.save(student).fold(
