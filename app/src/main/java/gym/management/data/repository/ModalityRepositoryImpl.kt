@@ -22,7 +22,6 @@ class ModalityRepositoryImpl(
         val listener = collection.whereEqualTo("userId", userId).addSnapshotListener { snapshot, error ->
             if (error != null) { close(error); return@addSnapshotListener }
             val modalities = (snapshot?.toObjects(Modality::class.java) ?: emptyList()).map { m ->
-                // migração: documentos antigos têm schedule (String), novos têm schedules (List)
                 if (m.schedules.isEmpty() && m.schedule.isNotBlank()) m.copy(schedules = listOf(m.schedule))
                 else m
             }
