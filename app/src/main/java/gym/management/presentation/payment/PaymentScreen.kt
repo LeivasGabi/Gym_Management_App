@@ -20,11 +20,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -120,6 +121,7 @@ fun PaymentScreen(
                 modifier = Modifier.padding(innerPadding)
             )
 
+
             is PaymentScreenState.DetailError -> {
                 Text(
                     text = uiState.message,
@@ -159,18 +161,28 @@ private fun YearPickerView(
             Spacer(modifier = Modifier.height(8.dp))
         }
         items(years) { year ->
-            FilledTonalButton(
-                onClick = { onYearSelected(year) },
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(56.dp)
+                    .clickable { onYearSelected(year) },
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(
-                    text = year.toString(),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = year.toString(),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
             }
         }
         item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -203,17 +215,28 @@ private fun MonthPickerView(
             Spacer(modifier = Modifier.height(8.dp))
         }
         items(months) { month ->
-            FilledTonalButton(
-                onClick = { onMonthSelected(month) },
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp),
+                    .height(52.dp)
+                    .clickable { onMonthSelected(month) },
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(
-                    text = monthName(month),
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = monthName(month),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
             }
         }
         item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -287,7 +310,7 @@ private fun DetailView(
         }
 
         item(key = "footer") {
-            PaymentFooter(totalPaid = uiState.totalPaid)
+            PaymentFooter(totalPaid = uiState.totalPaid, totalExpected = uiState.totalExpected)
         }
 
         item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -363,11 +386,22 @@ private fun StudentPaymentCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.student.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = item.student.name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    if (item.isOverdue) {
+                        Spacer(modifier = Modifier.size(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "Inadimplente",
+                            tint = Color(0xFFE65100),
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
                 if (item.student.paymentDay > 0) {
                     Text(
                         text = "Vencimento: todo dia ${item.student.paymentDay}",
@@ -397,7 +431,8 @@ private fun StudentPaymentCard(
 }
 
 @Composable
-private fun PaymentFooter(totalPaid: Double) {
+private fun PaymentFooter(totalPaid: Double, totalExpected: Double) {
+    val pending = totalExpected - totalPaid
     Spacer(modifier = Modifier.height(8.dp))
     HorizontalDivider()
     Spacer(modifier = Modifier.height(8.dp))
@@ -407,24 +442,63 @@ private fun PaymentFooter(totalPaid: Double) {
         tonalElevation = 4.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = "Total recebido",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            Text(
-                text = formatCurrency(totalPaid),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Total esperado",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = formatCurrency(totalExpected),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Total recebido",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = formatCurrency(totalPaid),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+            if (pending > 0.01) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Pendente",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                    Text(
+                        text = formatCurrency(pending),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         }
     }
 }

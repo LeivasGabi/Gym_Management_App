@@ -36,11 +36,17 @@ class ModalityStudentsFragment : Fragment() {
         setContent {
             GymManagementAppTheme {
                 val uiState by viewModel.uiState.collectAsState()
+                val editSaveState by viewModel.editSaveState.collectAsState()
 
                 ModalityStudentsScreen(
                     modalityName = modalityName,
                     uiState = uiState,
-                    onBackClick = { findNavController().popBackStack() }
+                    editSaveState = editSaveState,
+                    onBackClick = { findNavController().popBackStack() },
+                    onUpdateModality = { name, schedules, price, frequency, active ->
+                        viewModel.updateModality(name, schedules, price, frequency, active)
+                    },
+                    onEditSaveHandled = { viewModel.resetEditState() }
                 )
             }
         }

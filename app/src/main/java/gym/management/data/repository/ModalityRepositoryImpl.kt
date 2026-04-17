@@ -21,7 +21,12 @@ class ModalityRepositoryImpl(
         val userId = auth.currentUser?.uid ?: run { trySend(emptyList()); close(); return@callbackFlow }
         val listener = collection.whereEqualTo("userId", userId).addSnapshotListener { snapshot, error ->
             if (error != null) { close(error); return@addSnapshotListener }
-            trySend(snapshot?.toObjects(Modality::class.java) ?: emptyList())
+            val modalities = (snapshot?.toObjects(Modality::class.java) ?: emptyList()).map { m ->
+                // migração: documentos antigos têm schedule (String), novos têm schedules (List)
+                if (m.schedules.isEmpty() && m.schedule.isNotBlank()) m.copy(schedules = listOf(m.schedule))
+                else m
+            }
+            trySend(modalities)
         }
         awaitClose { listener.remove() }
     }
@@ -31,6 +36,10 @@ class ModalityRepositoryImpl(
         val saved = modality.copy(id = doc.id)
         doc.set(saved).await()
         saved
+    }
+
+    override suspend fun update(modality: Modality): Result<Unit> = runCatching {
+        collection.document(modality.id).set(modality).await()
     }
 
     override suspend fun delete(id: String): Result<Unit> = runCatching {

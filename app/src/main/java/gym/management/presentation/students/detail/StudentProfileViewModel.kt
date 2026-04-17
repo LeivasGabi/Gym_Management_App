@@ -57,7 +57,8 @@ class StudentProfileViewModel(
         emergencyContactName: String,
         emergencyContact: String,
         paymentDay: Int,
-        modalityIds: List<String>
+        modalityIds: List<String>,
+        notes: String
     ) {
         val current = (_uiState.value as? StudentProfileUiState.Success)?.student ?: return
         viewModelScope.launch {
@@ -68,7 +69,8 @@ class StudentProfileViewModel(
                 emergencyContactName = emergencyContactName,
                 emergencyContact = emergencyContact,
                 paymentDay = paymentDay,
-                modalityIds = modalityIds
+                modalityIds = modalityIds,
+                notes = notes
             )
             _saveState.value = studentRepository.update(updated).fold(
                 onSuccess = {

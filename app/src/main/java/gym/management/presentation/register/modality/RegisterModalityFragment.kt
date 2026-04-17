@@ -32,8 +32,8 @@ class RegisterModalityFragment : Fragment() {
 
                 RegisterModalityScreen(
                     uiState = uiState,
-                    onSaveClick = { name, schedule, price, frequency ->
-                        viewModel.saveModality(name, schedule, price, frequency)
+                    onSaveClick = { name, schedules, price, frequency ->
+                        viewModel.saveModality(name, schedules, price, frequency)
                     },
                     onSuccess = { findNavController().popBackStack() },
                     onErrorShown = { viewModel.resetState() },

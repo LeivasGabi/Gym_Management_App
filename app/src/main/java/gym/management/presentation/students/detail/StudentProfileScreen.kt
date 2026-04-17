@@ -48,6 +48,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import gym.management.domain.model.Modality
 import gym.management.domain.model.Student
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +59,7 @@ fun StudentProfileScreen(
     saveState: SaveState,
     onBackClick: () -> Unit,
     onToggleActive: (Boolean) -> Unit,
-    onSave: (phone: String, address: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>) -> Unit,
+    onSave: (phone: String, address: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>, notes: String) -> Unit,
     onSaveHandled: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -153,9 +156,13 @@ private fun StudentProfileContent(
     availableModalities: List<Modality>,
     isSaving: Boolean,
     onToggleActive: (Boolean) -> Unit,
-    onSave: (phone: String, address: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>) -> Unit,
+    onSave: (phone: String, address: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>, notes: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val registrationDateFormatted = remember(student.registrationDate) {
+        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(student.registrationDate))
+    }
+
     var phone by rememberSaveable(student.phone) { mutableStateOf(student.phone) }
     var address by rememberSaveable(student.address) { mutableStateOf(student.address) }
     var emergencyContactName by rememberSaveable(student.emergencyContactName) { mutableStateOf(student.emergencyContactName) }
@@ -163,6 +170,7 @@ private fun StudentProfileContent(
     var paymentDay by rememberSaveable(student.paymentDay) { mutableStateOf(student.paymentDay) }
     var paymentDayExpanded by remember { mutableStateOf(false) }
     var selectedModalityIds by rememberSaveable(student.modalityIds) { mutableStateOf(student.modalityIds.toSet()) }
+    var notes by rememberSaveable(student.notes) { mutableStateOf(student.notes) }
 
     Column(
         modifier = modifier
@@ -174,6 +182,7 @@ private fun StudentProfileContent(
         ProfileField(label = "Nome", value = student.name)
         HorizontalDivider()
         ProfileField(label = "Data de nascimento", value = student.birthDate.ifBlank { "—" })
+        ProfileField(label = "Data de matrícula", value = registrationDateFormatted)
 
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -276,17 +285,38 @@ private fun StudentProfileContent(
                             }
                         }
                     )
-                    Text(
-                        text = modality.name,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = modality.name,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        val schedule = modality.schedules.joinToString(", ").ifBlank { modality.schedule }
+                        if (schedule.isNotBlank()) {
+                            Text(
+                                text = schedule,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
         }
 
+        HorizontalDivider()
+
+        OutlinedTextField(
+            value = notes,
+            onValueChange = { notes = it },
+            label = { Text("Observações") },
+            modifier = Modifier.fillMaxWidth(),
+            minLines = 3,
+            maxLines = 6
+        )
+
         Button(
             onClick = {
-                onSave(phone, address, emergencyContactName, emergencyContact, paymentDay, selectedModalityIds.toList())
+                onSave(phone, address, emergencyContactName, emergencyContact, paymentDay, selectedModalityIds.toList(), notes)
             },
             enabled = !isSaving,
             modifier = Modifier.fillMaxWidth()

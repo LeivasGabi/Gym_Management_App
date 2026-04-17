@@ -12,5 +12,6 @@ data class Student(
     val paymentDay: Int = 0,
     val modalityIds: List<String> = emptyList(),
     val active: Boolean = true,
-    val registrationDate: Long = System.currentTimeMillis()
+    val registrationDate: Long = System.currentTimeMillis(),
+    val notes: String = ""
 )

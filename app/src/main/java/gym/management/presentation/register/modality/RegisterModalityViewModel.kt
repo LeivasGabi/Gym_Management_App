@@ -18,14 +18,14 @@ class RegisterModalityViewModel(
     private val _uiState = MutableStateFlow<RegisterModalityUiState>(RegisterModalityUiState.Idle)
     val uiState: StateFlow<RegisterModalityUiState> = _uiState.asStateFlow()
 
-    fun saveModality(name: String, schedule: String, price: String, frequency: String) {
+    fun saveModality(name: String, schedules: List<String>, price: String, frequency: String) {
         viewModelScope.launch {
             _uiState.value = RegisterModalityUiState.Loading
             val userId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
             val modality = Modality(
                 userId = userId,
                 name = name,
-                schedule = schedule,
+                schedules = schedules,
                 price = price.replace(",", ".").toDoubleOrNull() ?: 0.0,
                 frequency = frequency
             )

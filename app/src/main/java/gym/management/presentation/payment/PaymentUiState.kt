@@ -7,7 +7,8 @@ import gym.management.domain.model.Student
 data class StudentPaymentItem(
     val student: Student,
     val modality: Modality,
-    val payment: Payment?
+    val payment: Payment?,
+    val isOverdue: Boolean = false
 ) {
     val isPaid: Boolean get() = payment != null
 }
@@ -25,7 +26,8 @@ sealed class PaymentScreenState {
         val year: Int,
         val month: Int,
         val groups: List<ModalityPaymentGroup>,
-        val totalPaid: Double
+        val totalPaid: Double,
+        val totalExpected: Double
     ) : PaymentScreenState()
     data class DetailError(val year: Int, val month: Int, val message: String) : PaymentScreenState()
 }

@@ -6,5 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface ModalityRepository {
     fun observeAll(): Flow<List<Modality>>
     suspend fun save(modality: Modality): Result<Modality>
+    suspend fun update(modality: Modality): Result<Unit>
     suspend fun delete(id: String): Result<Unit>
 }

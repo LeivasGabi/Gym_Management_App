@@ -68,20 +68,30 @@ class PaymentViewModel(
                 studentRepository.observeAll(),
                 paymentRepository.observeByMonth(year, month)
             ) { modalities, students, payments ->
+                val today = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+                val currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
+                val isCurrentMonth = year == currentYear && month == currentMonth
+
                 val activeStudents = students.filter { it.active }
-                val groups = modalities.mapNotNull { modality ->
+                val groups = modalities.filter { it.active }.mapNotNull { modality ->
                     val enrolled = activeStudents.filter { modality.id in it.modalityIds }
                     if (enrolled.isEmpty()) return@mapNotNull null
                     ModalityPaymentGroup(
                         modality = modality,
                         isExpanded = modality.id !in collapsed,
                         students = enrolled.map { student ->
+                            val existingPayment = payments.find {
+                                it.studentId == student.id && it.modalityId == modality.id
+                            }
+                            val isOverdue = isCurrentMonth &&
+                                existingPayment == null &&
+                                student.paymentDay in 1..today
                             StudentPaymentItem(
                                 student = student,
                                 modality = modality,
-                                payment = payments.find {
-                                    it.studentId == student.id && it.modalityId == modality.id
-                                }
+                                payment = existingPayment,
+                                isOverdue = isOverdue
                             )
                         }
                     )
@@ -89,12 +99,14 @@ class PaymentViewModel(
                 val totalPaid = groups.flatMap { it.students }
                     .filter { it.isPaid }
                     .sumOf { it.payment!!.amount }
+                val totalExpected = groups.flatMap { it.students }.sumOf { it.modality.price }
 
                 PaymentScreenState.Detail(
                     year = year,
                     month = month,
                     groups = groups,
-                    totalPaid = totalPaid
+                    totalPaid = totalPaid,
+                    totalExpected = totalExpected
                 )
             }
         }

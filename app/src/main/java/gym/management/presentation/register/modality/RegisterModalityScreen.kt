@@ -1,7 +1,6 @@
 package gym.management.presentation.register.modality
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,6 +19,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,20 +54,17 @@ private val DAYS_OF_WEEK = listOf("Segunda", "Terça", "Quarta", "Quinta", "Sext
 @Composable
 fun RegisterModalityScreen(
     uiState: RegisterModalityUiState,
-    onSaveClick: (name: String, schedule: String, price: String, frequency: String) -> Unit,
+    onSaveClick: (name: String, schedules: List<String>, price: String, frequency: String) -> Unit,
     onSuccess: () -> Unit,
     onErrorShown: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
-    var selectedHour by remember { mutableStateOf(8) }
-    var selectedMinute by remember { mutableStateOf(0) }
-    var showTimePicker by remember { mutableStateOf(false) }
+    var schedules by remember { mutableStateOf(listOf("08:00")) }
+    var editingIndex by remember { mutableStateOf<Int?>(null) }
     var price by remember { mutableStateOf("") }
     var selectedDays by remember { mutableStateOf(setOf<String>()) }
     val snackbarHostState = remember { SnackbarHostState() }
-
-    val formattedSchedule = "%02d:%02d".format(selectedHour, selectedMinute)
 
     LaunchedEffect(uiState) {
         when (uiState) {
@@ -77,15 +77,22 @@ fun RegisterModalityScreen(
         }
     }
 
-    if (showTimePicker) {
+    if (editingIndex != null) {
+        val idx = editingIndex!!
+        val parts = schedules.getOrElse(idx) { "08:00" }.split(":")
         WheelTimePickerDialog(
-            initialHour = selectedHour,
-            initialMinute = selectedMinute,
-            onDismiss = { showTimePicker = false },
+            initialHour = parts.getOrNull(0)?.toIntOrNull() ?: 8,
+            initialMinute = parts.getOrNull(1)?.toIntOrNull() ?: 0,
+            onDismiss = {
+                if (idx >= schedules.size) schedules = schedules.dropLast(1)
+                editingIndex = null
+            },
             onConfirm = { hour, minute ->
-                selectedHour = hour
-                selectedMinute = minute
-                showTimePicker = false
+                val newTime = "%02d:%02d".format(hour, minute)
+                schedules = schedules.toMutableList().also { list ->
+                    if (idx < list.size) list[idx] = newTime else list.add(newTime)
+                }
+                editingIndex = null
             }
         )
     }
@@ -149,7 +156,7 @@ fun RegisterModalityScreen(
             }
 
             Text(
-                text = "Horário",
+                text = "Horários",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 4.dp)
@@ -158,27 +165,59 @@ fun RegisterModalityScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
                     .border(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.outline,
                         shape = RoundedCornerShape(4.dp)
                     )
-                    .clickable { showTimePicker = true }
-                    .padding(horizontal = 16.dp),
-                contentAlignment = Alignment.CenterStart
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = formattedSchedule, style = MaterialTheme.typography.bodyLarge)
-                    Icon(
-                        imageVector = Icons.Default.AccessTime,
-                        contentDescription = "Selecionar horário",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    schedules.forEachIndexed { index, schedule ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = schedule,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.weight(1f)
+                            )
+                            IconButton(onClick = { editingIndex = index }) {
+                                Icon(
+                                    imageVector = Icons.Default.AccessTime,
+                                    contentDescription = "Editar horário",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            if (schedules.size > 1) {
+                                IconButton(onClick = {
+                                    schedules = schedules.filterIndexed { i, _ -> i != index }
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Remover horário",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    TextButton(
+                        onClick = {
+                            val newIndex = schedules.size
+                            schedules = schedules + "08:00"
+                            editingIndex = newIndex
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Adicionar horário")
+                    }
                 }
             }
 
@@ -198,7 +237,7 @@ fun RegisterModalityScreen(
                     val frequency = selectedDays
                         .sortedBy { DAYS_OF_WEEK.indexOf(it) }
                         .joinToString(", ")
-                    onSaveClick(name, formattedSchedule, price, frequency)
+                    onSaveClick(name, schedules, price, frequency)
                 },
                 enabled = uiState !is RegisterModalityUiState.Loading
                         && name.isNotBlank()
