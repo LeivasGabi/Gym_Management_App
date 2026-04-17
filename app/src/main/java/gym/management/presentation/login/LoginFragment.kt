@@ -21,6 +21,13 @@ class LoginFragment : Fragment() {
         LoginViewModel.factory(AuthRepositoryImpl())
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (AuthRepositoryImpl().isLoggedIn()) {
+            findNavController().navigate(R.id.action_login_to_mainMenu)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

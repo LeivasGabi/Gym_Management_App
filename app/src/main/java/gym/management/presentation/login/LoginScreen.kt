@@ -1,7 +1,9 @@
 package gym.management.presentation.login
 
 import android.graphics.BitmapFactory
+import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,7 +38,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -87,21 +94,41 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 val context = LocalContext.current
-                val logoBitmap = remember {
+                val isDark = isSystemInDarkTheme()
+                val logoRes = if (isDark) R.drawable.logo_amarelo else R.drawable.logo_vermelho
+                val logoBitmap = remember(logoRes) {
                     val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                    BitmapFactory.decodeResource(context.resources, R.drawable.logo_gkj_png_branco, opts)
+                    BitmapFactory.decodeResource(context.resources, logoRes, opts)
                     var sample = 1
-                    while (maxOf(opts.outWidth, opts.outHeight) / sample > 600) sample *= 2
+                    while (maxOf(opts.outWidth, opts.outHeight) / sample > 300) sample *= 2
                     BitmapFactory.decodeResource(
                         context.resources,
-                        R.drawable.logo_gkj_png_branco,
+                        logoRes,
                         BitmapFactory.Options().apply { inSampleSize = sample }
                     ).asImageBitmap()
                 }
+                val shadowColor = MaterialTheme.colorScheme.primary
                 Image(
                     bitmap = logoBitmap,
                     contentDescription = "Logo Grupo Kiol Jong",
-                    modifier = Modifier.size(140.dp),
+                    modifier = Modifier
+                        .size(140.dp)
+                        .drawBehind {
+                            drawIntoCanvas { canvas ->
+                                val paint = Paint().also {
+                                    it.asFrameworkPaint().apply {
+                                        isAntiAlias = true
+                                        color = shadowColor.copy(alpha = 0.55f).toArgb()
+                                        maskFilter = BlurMaskFilter(52f, BlurMaskFilter.Blur.OUTER)
+                                    }
+                                }
+                                canvas.drawCircle(
+                                    center = Offset(size.width / 2f, size.height / 2f + 6f),
+                                    radius = minOf(size.width, size.height) * 0.5f,
+                                    paint = paint
+                                )
+                            }
+                        },
                     contentScale = ContentScale.Fit
                 )
 
@@ -125,7 +152,11 @@ fun LoginScreen(
                     onValueChange = { email = it },
                     label = { Text("E-mail") },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Default.Email, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     singleLine = true,
@@ -137,7 +168,11 @@ fun LoginScreen(
                     onValueChange = { password = it },
                     label = { Text("Senha") },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Default.Lock, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     },
                     trailingIcon = {
                         IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -145,7 +180,8 @@ fun LoginScreen(
                                 imageVector = if (passwordVisible) Icons.Default.VisibilityOff
                                               else Icons.Default.Visibility,
                                 contentDescription = if (passwordVisible) "Ocultar senha"
-                                                     else "Mostrar senha"
+                                                     else "Mostrar senha",
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     },

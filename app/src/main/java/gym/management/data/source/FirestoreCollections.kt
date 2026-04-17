@@ -4,4 +4,5 @@ object FirestoreCollections {
     const val STUDENTS = "students"
     const val PAYMENTS = "payments"
     const val MODALITIES = "modalidades"
+    const val GRADUATIONS = "graduations"
 }

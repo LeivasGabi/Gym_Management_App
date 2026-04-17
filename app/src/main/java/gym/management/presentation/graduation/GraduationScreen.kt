@@ -64,7 +64,9 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
+private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR")).apply {
+    timeZone = TimeZone.getTimeZone("UTC")
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -502,8 +504,4 @@ private fun GraduationDialog(
     )
 }
 
-private fun utcMidnight(millis: Long): Long {
-    val tz = TimeZone.getDefault()
-    val offset = tz.getOffset(millis)
-    return millis + offset
-}
+private fun utcMidnight(millis: Long): Long = (millis / 86_400_000L) * 86_400_000L

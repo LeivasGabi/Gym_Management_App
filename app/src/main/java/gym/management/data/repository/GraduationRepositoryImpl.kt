@@ -25,6 +25,19 @@ class GraduationRepositoryImpl(
         awaitClose { listener.remove() }
     }
 
+    // Firestore whereIn suporta até 30 valores; para academias com > 30 alunos
+    // seria necessário dividir em múltiplas queries e mesclar os resultados.
+    override fun observeByStudentIds(studentIds: List<String>): Flow<List<Graduation>> = callbackFlow {
+        if (studentIds.isEmpty()) { trySend(emptyList()); close(); return@callbackFlow }
+        val listener = collection
+            .whereIn("studentId", studentIds.take(30))
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) { close(error); return@addSnapshotListener }
+                trySend(snapshot?.toObjects(Graduation::class.java) ?: emptyList())
+            }
+        awaitClose { listener.remove() }
+    }
+
     override fun observeByModality(modalityId: String): Flow<List<Graduation>> = callbackFlow {
         val listener = collection
             .whereEqualTo("modalityId", modalityId)
