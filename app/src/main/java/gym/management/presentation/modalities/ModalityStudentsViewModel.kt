@@ -29,6 +29,9 @@ class ModalityStudentsViewModel(
     private val _editSaveState = MutableStateFlow<ModalityEditSaveState>(ModalityEditSaveState.Idle)
     val editSaveState: StateFlow<ModalityEditSaveState> = _editSaveState.asStateFlow()
 
+    private val _deleteState = MutableStateFlow<ModalityDeleteState>(ModalityDeleteState.Idle)
+    val deleteState: StateFlow<ModalityDeleteState> = _deleteState.asStateFlow()
+
     init {
         viewModelScope.launch {
             try {
@@ -79,6 +82,20 @@ class ModalityStudentsViewModel(
 
     fun resetEditState() {
         _editSaveState.value = ModalityEditSaveState.Idle
+    }
+
+    fun deleteModality() {
+        viewModelScope.launch {
+            _deleteState.value = ModalityDeleteState.Loading
+            _deleteState.value = modalityRepository.delete(modalityId).fold(
+                onSuccess = { ModalityDeleteState.Success },
+                onFailure = { ModalityDeleteState.Error(it.message ?: "Erro ao excluir modalidade") }
+            )
+        }
+    }
+
+    fun resetDeleteState() {
+        _deleteState.value = ModalityDeleteState.Idle
     }
 
     companion object {

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -75,6 +76,21 @@ fun RegisterModalityScreen(
             }
             else -> Unit
         }
+    }
+
+    if (uiState is RegisterModalityUiState.Conflict) {
+        val names = uiState.conflictingNames
+        AlertDialog(
+            onDismissRequest = { onErrorShown() },
+            title = { Text("Conflito de horário") },
+            text = {
+                val listText = names.joinToString("\n") { "• $it" }
+                Text("Já existe${if (names.size > 1) "m" else ""} modalidade${if (names.size > 1) "s" else ""} cadastrada${if (names.size > 1) "s" else ""} neste mesmo dia e horário:\n\n$listText")
+            },
+            confirmButton = {
+                Button(onClick = { onErrorShown() }) { Text("Entendi") }
+            }
+        )
     }
 
     if (editingIndex != null) {

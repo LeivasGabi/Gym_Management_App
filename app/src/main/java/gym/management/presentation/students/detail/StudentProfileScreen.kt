@@ -59,7 +59,7 @@ fun StudentProfileScreen(
     saveState: SaveState,
     onBackClick: () -> Unit,
     onToggleActive: (Boolean) -> Unit,
-    onSave: (phone: String, address: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>, notes: String) -> Unit,
+    onSave: (name: String, phone: String, address: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>, notes: String, birthDate: String, registrationDate: Long) -> Unit,
     onSaveHandled: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -145,6 +145,7 @@ fun StudentProfileScreen(
                     modifier = Modifier.padding(innerPadding)
                 )
             }
+
         }
     }
 }
@@ -156,13 +157,16 @@ private fun StudentProfileContent(
     availableModalities: List<Modality>,
     isSaving: Boolean,
     onToggleActive: (Boolean) -> Unit,
-    onSave: (phone: String, address: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>, notes: String) -> Unit,
+    onSave: (name: String, phone: String, address: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>, notes: String, birthDate: String, registrationDate: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val registrationDateFormatted = remember(student.registrationDate) {
-        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(student.registrationDate))
-    }
+    val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
+    var name by rememberSaveable(student.name) { mutableStateOf(student.name) }
+    var birthDate by rememberSaveable(student.birthDate) { mutableStateOf(student.birthDate) }
+    var registrationDateText by rememberSaveable(student.registrationDate) {
+        mutableStateOf(dateFormat.format(Date(student.registrationDate)))
+    }
     var phone by rememberSaveable(student.phone) { mutableStateOf(student.phone) }
     var address by rememberSaveable(student.address) { mutableStateOf(student.address) }
     var emergencyContactName by rememberSaveable(student.emergencyContactName) { mutableStateOf(student.emergencyContactName) }
@@ -179,10 +183,30 @@ private fun StudentProfileContent(
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ProfileField(label = "Nome", value = student.name)
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Nome") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
         HorizontalDivider()
-        ProfileField(label = "Data de nascimento", value = student.birthDate.ifBlank { "—" })
-        ProfileField(label = "Data de matrícula", value = registrationDateFormatted)
+        OutlinedTextField(
+            value = birthDate,
+            onValueChange = { birthDate = it },
+            label = { Text("Data de nascimento") },
+            placeholder = { Text("dd/MM/yyyy") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+        OutlinedTextField(
+            value = registrationDateText,
+            onValueChange = { registrationDateText = it },
+            label = { Text("Data de matrícula") },
+            placeholder = { Text("dd/MM/yyyy") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
 
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -316,7 +340,10 @@ private fun StudentProfileContent(
 
         Button(
             onClick = {
-                onSave(phone, address, emergencyContactName, emergencyContact, paymentDay, selectedModalityIds.toList(), notes)
+                val parsedRegistrationDate = runCatching {
+                    dateFormat.parse(registrationDateText)?.time ?: student.registrationDate
+                }.getOrDefault(student.registrationDate)
+                onSave(name, phone, address, emergencyContactName, emergencyContact, paymentDay, selectedModalityIds.toList(), notes, birthDate, parsedRegistrationDate)
             },
             enabled = !isSaving,
             modifier = Modifier.fillMaxWidth()
@@ -352,17 +379,3 @@ private fun StudentProfileContent(
     }
 }
 
-@Composable
-private fun ProfileField(label: String, value: String) {
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge
-        )
-    }
-}

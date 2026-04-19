@@ -38,8 +38,8 @@ class RegisterStudentFragment : Fragment() {
                     uiState = uiState,
                     modalities = modalities,
                     modalitiesLoaded = modalitiesLoaded,
-                    onSaveClick = { name, phone, address, birthDate, emergencyContactName, emergencyContact, paymentDay, modalityIds ->
-                        viewModel.saveStudent(name, phone, address, birthDate, emergencyContactName, emergencyContact, paymentDay, modalityIds)
+                    onSaveClick = { name, phone, address, birthDate, emergencyContactName, emergencyContact, paymentDay, modalityIds, registrationDate ->
+                        viewModel.saveStudent(name, phone, address, birthDate, emergencyContactName, emergencyContact, paymentDay, modalityIds, registrationDate)
                     },
                     onSuccess = { findNavController().popBackStack() },
                     onErrorShown = { viewModel.resetState() },

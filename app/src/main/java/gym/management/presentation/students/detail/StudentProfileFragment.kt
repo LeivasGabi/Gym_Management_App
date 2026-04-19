@@ -35,8 +35,8 @@ class StudentProfileFragment : Fragment() {
                     saveState = saveState,
                     onBackClick = { findNavController().popBackStack() },
                     onToggleActive = { viewModel.toggleActive(it) },
-                    onSave = { phone, address, emergencyContactName, emergencyContact, paymentDay, modalityIds, notes ->
-                        viewModel.saveContactInfo(phone, address, emergencyContactName, emergencyContact, paymentDay, modalityIds, notes)
+                    onSave = { name, phone, address, emergencyContactName, emergencyContact, paymentDay, modalityIds, notes, birthDate, registrationDate ->
+                        viewModel.saveContactInfo(name, phone, address, emergencyContactName, emergencyContact, paymentDay, modalityIds, notes, birthDate, registrationDate)
                     },
                     onSaveHandled = { viewModel.resetSaveState() }
                 )

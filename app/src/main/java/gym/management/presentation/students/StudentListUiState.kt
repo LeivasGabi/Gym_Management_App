@@ -4,7 +4,7 @@ import gym.management.domain.model.Student
 
 data class StudentListItem(
     val student: Student,
-    val latestBelt: String?
+    val modalityNames: List<String>
 )
 
 sealed class StudentListUiState {

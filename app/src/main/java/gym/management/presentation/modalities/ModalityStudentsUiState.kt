@@ -23,3 +23,10 @@ sealed class ModalityEditSaveState {
     object Success : ModalityEditSaveState()
     data class Error(val message: String) : ModalityEditSaveState()
 }
+
+sealed class ModalityDeleteState {
+    object Idle : ModalityDeleteState()
+    object Loading : ModalityDeleteState()
+    object Success : ModalityDeleteState()
+    data class Error(val message: String) : ModalityDeleteState()
+}

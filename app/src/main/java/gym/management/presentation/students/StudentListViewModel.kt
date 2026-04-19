@@ -3,22 +3,19 @@ package gym.management.presentation.students
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import gym.management.data.repository.GraduationRepositoryImpl
+import gym.management.data.repository.ModalityRepositoryImpl
 import gym.management.data.repository.StudentRepositoryImpl
-import gym.management.domain.repository.GraduationRepository
+import gym.management.domain.repository.ModalityRepository
 import gym.management.domain.repository.StudentRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class StudentListViewModel(
     private val studentRepository: StudentRepository,
-    private val graduationRepository: GraduationRepository
+    private val modalityRepository: ModalityRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<StudentListUiState>(StudentListUiState.Loading)
@@ -26,22 +23,18 @@ class StudentListViewModel(
 
     init {
         viewModelScope.launch {
-            studentRepository.observeAll()
-                .flatMapLatest { students ->
-                    val ids = students.map { it.id }
-                    graduationRepository.observeByStudentIds(ids)
-                        .combine(kotlinx.coroutines.flow.flowOf(students)) { graduations, s -> s to graduations }
+            combine(
+                studentRepository.observeAll(),
+                modalityRepository.observeAll()
+            ) { students, modalities ->
+                val modalityMap = modalities.associateBy { it.id }
+                students.map { student ->
+                    val names = student.modalityIds.mapNotNull { modalityMap[it]?.name }
+                    StudentListItem(student = student, modalityNames = names)
                 }
-                .collect { (students, graduations) ->
-                    val items = students.map { student ->
-                        val latestBelt = graduations
-                            .filter { it.studentId == student.id }
-                            .maxByOrNull { it.date }
-                            ?.belt
-                        StudentListItem(student = student, latestBelt = latestBelt)
-                    }
-                    _uiState.value = StudentListUiState.Success(items)
-                }
+            }.collect { items ->
+                _uiState.value = StudentListUiState.Success(items)
+            }
         }
     }
 
@@ -49,7 +42,7 @@ class StudentListViewModel(
         fun factory(): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                StudentListViewModel(StudentRepositoryImpl(), GraduationRepositoryImpl()) as T
+                StudentListViewModel(StudentRepositoryImpl(), ModalityRepositoryImpl()) as T
         }
     }
 }

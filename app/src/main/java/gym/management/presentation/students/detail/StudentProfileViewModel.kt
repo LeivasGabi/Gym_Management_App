@@ -52,25 +52,31 @@ class StudentProfileViewModel(
     }
 
     fun saveContactInfo(
+        name: String,
         phone: String,
         address: String,
         emergencyContactName: String,
         emergencyContact: String,
         paymentDay: Int,
         modalityIds: List<String>,
-        notes: String
+        notes: String,
+        birthDate: String,
+        registrationDate: Long
     ) {
         val current = (_uiState.value as? StudentProfileUiState.Success)?.student ?: return
         viewModelScope.launch {
             _saveState.value = SaveState.Loading
             val updated = current.copy(
+                name = name,
                 phone = phone,
                 address = address,
                 emergencyContactName = emergencyContactName,
                 emergencyContact = emergencyContact,
                 paymentDay = paymentDay,
                 modalityIds = modalityIds,
-                notes = notes
+                notes = notes,
+                birthDate = birthDate,
+                registrationDate = registrationDate
             )
             _saveState.value = studentRepository.update(updated).fold(
                 onSuccess = {

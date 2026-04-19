@@ -44,7 +44,8 @@ class RegisterStudentViewModel(
         emergencyContactName: String,
         emergencyContact: String,
         paymentDay: Int,
-        modalityIds: List<String>
+        modalityIds: List<String>,
+        registrationDate: Long
     ) {
         viewModelScope.launch {
             _uiState.value = RegisterStudentUiState.Loading
@@ -58,7 +59,8 @@ class RegisterStudentViewModel(
                 emergencyContactName = emergencyContactName,
                 emergencyContact = emergencyContact,
                 paymentDay = paymentDay,
-                modalityIds = modalityIds
+                modalityIds = modalityIds,
+                registrationDate = registrationDate
             )
             _uiState.value = studentRepository.save(student).fold(
                 onSuccess = { RegisterStudentUiState.Success },

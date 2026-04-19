@@ -22,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -66,12 +67,30 @@ fun ModalityStudentsScreen(
     modalityName: String,
     uiState: ModalityStudentsUiState,
     editSaveState: ModalityEditSaveState,
+    deleteState: ModalityDeleteState,
     onBackClick: () -> Unit,
     onUpdateModality: (name: String, schedules: List<String>, price: String, frequency: String, active: Boolean) -> Unit,
-    onEditSaveHandled: () -> Unit
+    onEditSaveHandled: () -> Unit,
+    onDeleteModality: () -> Unit,
+    onDeleteHandled: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
+    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(deleteState) {
+        when (deleteState) {
+            is ModalityDeleteState.Success -> {
+                onDeleteHandled()
+                onBackClick()
+            }
+            is ModalityDeleteState.Error -> {
+                snackbarHostState.showSnackbar(deleteState.message)
+                onDeleteHandled()
+            }
+            else -> Unit
+        }
+    }
 
     val currentModality = (uiState as? ModalityStudentsUiState.Success)?.modality
     val title = currentModality?.name ?: modalityName
@@ -89,6 +108,39 @@ fun ModalityStudentsScreen(
             }
             else -> Unit
         }
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { if (deleteState !is ModalityDeleteState.Loading) showDeleteDialog = false },
+            title = { Text("Excluir modalidade") },
+            text = { Text("Tem certeza que deseja excluir a modalidade \"${currentModality?.name ?: modalityName}\"? Esta ação não pode ser desfeita.") },
+            confirmButton = {
+                Button(
+                    onClick = onDeleteModality,
+                    enabled = deleteState !is ModalityDeleteState.Loading,
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    if (deleteState is ModalityDeleteState.Loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onError
+                        )
+                    } else {
+                        Text("Excluir")
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteDialog = false },
+                    enabled = deleteState !is ModalityDeleteState.Loading
+                ) { Text("Cancelar") }
+            }
+        )
     }
 
     if (showEditDialog && currentModality != null) {
@@ -121,6 +173,13 @@ fun ModalityStudentsScreen(
                             Icon(
                                 imageVector = Icons.Default.Edit,
                                 contentDescription = "Editar modalidade",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        IconButton(onClick = { showDeleteDialog = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Excluir modalidade",
                                 tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }

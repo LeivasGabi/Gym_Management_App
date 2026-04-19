@@ -60,7 +60,7 @@ fun RegisterStudentScreen(
     uiState: RegisterStudentUiState,
     modalities: List<Modality>,
     modalitiesLoaded: Boolean,
-    onSaveClick: (name: String, phone: String, address: String, birthDate: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>) -> Unit,
+    onSaveClick: (name: String, phone: String, address: String, birthDate: String, emergencyContactName: String, emergencyContact: String, paymentDay: Int, modalityIds: List<String>, registrationDate: Long) -> Unit,
     onSuccess: () -> Unit,
     onErrorShown: () -> Unit,
     onNavigateBack: () -> Unit,
@@ -71,11 +71,22 @@ fun RegisterStudentScreen(
     var address by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf("") }
     var showDatePicker by remember { mutableStateOf(false) }
-    val datePickerState = rememberDatePickerState()
+    var showRegistrationDatePicker by remember { mutableStateOf(false) }
     val dateFormatter = remember {
         SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
+    }
+    val todayMillis = remember { System.currentTimeMillis() }
+    val datePickerState = rememberDatePickerState()
+    val registrationDatePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = (todayMillis / 86_400_000L) * 86_400_000L
+    )
+    var registrationDate by remember {
+        mutableStateOf((todayMillis / 86_400_000L) * 86_400_000L)
+    }
+    var registrationDateText by remember {
+        mutableStateOf(dateFormatter.format(Date((todayMillis / 86_400_000L) * 86_400_000L)))
     }
     var emergencyContactName by remember { mutableStateOf("") }
     var emergencyContact by remember { mutableStateOf("") }
@@ -183,6 +194,45 @@ fun RegisterStudentScreen(
                     DatePicker(state = datePickerState)
                 }
             }
+
+            if (showRegistrationDatePicker) {
+                DatePickerDialog(
+                    onDismissRequest = { showRegistrationDatePicker = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            registrationDatePickerState.selectedDateMillis?.let { millis ->
+                                val normalized = (millis / 86_400_000L) * 86_400_000L
+                                registrationDate = normalized
+                                registrationDateText = dateFormatter.format(Date(normalized))
+                            }
+                            showRegistrationDatePicker = false
+                        }) { Text("OK") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showRegistrationDatePicker = false }) { Text("Cancelar") }
+                    }
+                ) {
+                    DatePicker(state = registrationDatePickerState)
+                }
+            }
+
+            OutlinedTextField(
+                value = registrationDateText,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Data de Matrícula") },
+                placeholder = { Text("dd/mm/aaaa") },
+                trailingIcon = {
+                    IconButton(onClick = { showRegistrationDatePicker = true }) {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = "Selecionar data de matrícula"
+                        )
+                    }
+                },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
 
             OutlinedTextField(
                 value = birthDate,
@@ -294,7 +344,7 @@ fun RegisterStudentScreen(
 
             Button(
                 onClick = {
-                    onSaveClick(name, phone, address, birthDate, emergencyContactName, emergencyContact, paymentDay, selectedModalityIds.toList())
+                    onSaveClick(name, phone, address, birthDate, emergencyContactName, emergencyContact, paymentDay, selectedModalityIds.toList(), registrationDate)
                 },
                 enabled = uiState !is RegisterStudentUiState.Loading && name.isNotBlank(),
                 modifier = Modifier

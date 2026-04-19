@@ -9,6 +9,7 @@ import gym.management.domain.repository.ModalityRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class RegisterModalityViewModel(
@@ -21,6 +22,21 @@ class RegisterModalityViewModel(
     fun saveModality(name: String, schedules: List<String>, price: String, frequency: String) {
         viewModelScope.launch {
             _uiState.value = RegisterModalityUiState.Loading
+
+            val newDays = frequency.split(", ").filter { it.isNotBlank() }.toSet()
+            val existing = modalityRepository.observeAll().first()
+            val conflicts = existing.filter { modality ->
+                val existingDays = modality.frequency.split(", ").filter { it.isNotBlank() }.toSet()
+                val existingSchedules = modality.schedules.ifEmpty { listOf(modality.schedule) }.toSet()
+                existingDays.intersect(newDays).isNotEmpty() &&
+                        existingSchedules.intersect(schedules.toSet()).isNotEmpty()
+            }
+
+            if (conflicts.isNotEmpty()) {
+                _uiState.value = RegisterModalityUiState.Conflict(conflicts.map { it.name })
+                return@launch
+            }
+
             val userId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
             val modality = Modality(
                 userId = userId,
