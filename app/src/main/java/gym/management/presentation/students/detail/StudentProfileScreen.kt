@@ -369,7 +369,8 @@ private fun StudentProfileContent(
             Text(
                 text = "Aluno inativo",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f)
             )
             Switch(
                 checked = !student.active,

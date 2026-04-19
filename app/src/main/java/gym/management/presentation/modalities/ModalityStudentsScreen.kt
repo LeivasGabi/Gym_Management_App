@@ -386,7 +386,7 @@ private fun EditModalityDialog(
                                 )
                                 IconButton(
                                     onClick = { editingIndex = index },
-                                    modifier = Modifier.size(36.dp)
+                                    modifier = Modifier.size(48.dp)
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.AccessTime,
@@ -400,7 +400,7 @@ private fun EditModalityDialog(
                                         onClick = {
                                             schedules = schedules.filterIndexed { i, _ -> i != index }
                                         },
-                                        modifier = Modifier.size(36.dp)
+                                        modifier = Modifier.size(48.dp)
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Close,
