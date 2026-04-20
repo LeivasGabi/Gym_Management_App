@@ -19,7 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -57,7 +56,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import gym.management.domain.model.Modality
-import gym.management.presentation.common.WheelTimePickerDialog
+import gym.management.presentation.common.applyTimeMask
+import gym.management.presentation.common.formatTimeDigits
+import gym.management.presentation.common.TimeVisualTransformation
 
 private val DAYS_OF_WEEK = listOf("Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado")
 
@@ -94,6 +95,12 @@ fun ModalityStudentsScreen(
 
     val currentModality = (uiState as? ModalityStudentsUiState.Success)?.modality
     val title = currentModality?.name ?: modalityName
+    val schedulesSubtitle = buildList {
+        val s = currentModality?.schedules?.joinToString(" · ")?.ifBlank { currentModality.schedule } ?: ""
+        if (s.isNotBlank()) add(s)
+        val f = currentModality?.frequency ?: ""
+        if (f.isNotBlank()) add(f)
+    }.joinToString("  |  ")
 
     LaunchedEffect(editSaveState) {
         when (editSaveState) {
@@ -157,7 +164,18 @@ fun ModalityStudentsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = title, fontWeight = FontWeight.Bold) },
+                title = {
+                    Column {
+                        Text(text = title, fontWeight = FontWeight.Bold)
+                        if (schedulesSubtitle.isNotBlank()) {
+                            Text(
+                                text = schedulesSubtitle,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -288,35 +306,16 @@ private fun EditModalityDialog(
     onDismiss: () -> Unit,
     onConfirm: (name: String, schedules: List<String>, price: String, frequency: String, active: Boolean) -> Unit
 ) {
-    val initialSchedules = modality.schedules.ifEmpty { listOf("08:00") }
+    val initialSchedules = modality.schedules
+        .map { it.replace(":", "") }
+        .ifEmpty { listOf("0800") }
     val initialDays = modality.frequency.split(", ").filter { it.isNotBlank() }.toSet()
 
     var name by rememberSaveable { mutableStateOf(modality.name) }
     var schedules by remember { mutableStateOf(initialSchedules) }
-    var editingIndex by remember { mutableStateOf<Int?>(null) }
     var price by rememberSaveable { mutableStateOf("%.2f".format(modality.price)) }
     var selectedDays by rememberSaveable { mutableStateOf(initialDays) }
     var active by rememberSaveable { mutableStateOf(modality.active) }
-
-    if (editingIndex != null) {
-        val idx = editingIndex!!
-        val parts = schedules.getOrElse(idx) { "08:00" }.split(":")
-        WheelTimePickerDialog(
-            initialHour = parts.getOrNull(0)?.toIntOrNull() ?: 8,
-            initialMinute = parts.getOrNull(1)?.toIntOrNull() ?: 0,
-            onDismiss = {
-                if (idx >= schedules.size) schedules = schedules.dropLast(1)
-                editingIndex = null
-            },
-            onConfirm = { hour, minute ->
-                val newTime = "%02d:%02d".format(hour, minute)
-                schedules = schedules.toMutableList().also { list ->
-                    if (idx < list.size) list[idx] = newTime else list.add(newTime)
-                }
-                editingIndex = null
-            }
-        )
-    }
 
     AlertDialog(
         onDismissRequest = { if (!isSaving) onDismiss() },
@@ -379,22 +378,18 @@ private fun EditModalityDialog(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = schedule,
-                                    style = MaterialTheme.typography.bodyLarge,
+                                OutlinedTextField(
+                                    value = schedule,
+                                    onValueChange = { input ->
+                                        schedules = schedules.toMutableList().also { it[index] = applyTimeMask(input) }
+                                    },
+                                    label = { Text("Horário") },
+                                    placeholder = { Text("HH:MM") },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    visualTransformation = TimeVisualTransformation(),
+                                    singleLine = true,
                                     modifier = Modifier.weight(1f)
                                 )
-                                IconButton(
-                                    onClick = { editingIndex = index },
-                                    modifier = Modifier.size(48.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.AccessTime,
-                                        contentDescription = "Editar",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
                                 if (schedules.size > 1) {
                                     IconButton(
                                         onClick = {
@@ -414,9 +409,7 @@ private fun EditModalityDialog(
                         }
                         TextButton(
                             onClick = {
-                                val newIndex = schedules.size
-                                schedules = schedules + "08:00"
-                                editingIndex = newIndex
+                                schedules = schedules + ""
                             }
                         ) {
                             Icon(
@@ -458,7 +451,7 @@ private fun EditModalityDialog(
                     val frequency = selectedDays
                         .sortedBy { DAYS_OF_WEEK.indexOf(it) }
                         .joinToString(", ")
-                    onConfirm(name, schedules, price, frequency, active)
+                    onConfirm(name, schedules.map { formatTimeDigits(it) }, price, frequency, active)
                 },
                 enabled = !isSaving && name.isNotBlank() && selectedDays.isNotEmpty()
             ) {

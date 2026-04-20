@@ -328,10 +328,17 @@ fun RegisterStudentScreen(
                                 text = modality.name,
                                 style = MaterialTheme.typography.bodyMedium
                             )
-                            val schedule = modality.schedules.joinToString(", ").ifBlank { modality.schedule }
+                            val schedule = modality.schedules.joinToString(" · ").ifBlank { modality.schedule }
                             if (schedule.isNotBlank()) {
                                 Text(
                                     text = schedule,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            if (modality.frequency.isNotBlank()) {
+                                Text(
+                                    text = modality.frequency,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
