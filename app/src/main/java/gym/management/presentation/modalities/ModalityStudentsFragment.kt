@@ -8,9 +8,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import gym.management.R
+import gym.management.presentation.students.detail.StudentDetailFragment
 import gym.management.ui.theme.GymManagementAppTheme
 
 class ModalityStudentsFragment : Fragment() {
@@ -50,7 +53,16 @@ class ModalityStudentsFragment : Fragment() {
                     },
                     onEditSaveHandled = { viewModel.resetEditState() },
                     onDeleteModality = { viewModel.deleteModality() },
-                    onDeleteHandled = { viewModel.resetDeleteState() }
+                    onDeleteHandled = { viewModel.resetDeleteState() },
+                    onStudentClick = { id, name ->
+                        findNavController().navigate(
+                            R.id.action_modalityStudents_to_studentDetail,
+                            bundleOf(
+                                StudentDetailFragment.ARG_STUDENT_ID to id,
+                                StudentDetailFragment.ARG_STUDENT_NAME to name
+                            )
+                        )
+                    }
                 )
             }
         }

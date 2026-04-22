@@ -1,5 +1,6 @@
 package gym.management.presentation.modalities
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -73,7 +74,8 @@ fun ModalityStudentsScreen(
     onUpdateModality: (name: String, schedules: List<String>, price: String, frequency: String, active: Boolean) -> Unit,
     onEditSaveHandled: () -> Unit,
     onDeleteModality: () -> Unit,
-    onDeleteHandled: () -> Unit
+    onDeleteHandled: () -> Unit,
+    onStudentClick: (studentId: String, studentName: String) -> Unit = { _, _ -> }
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
@@ -265,7 +267,10 @@ fun ModalityStudentsScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(uiState.students, key = { it.student.id }) { item ->
-                            StudentItem(item = item)
+                            StudentItem(
+                                item = item,
+                                onClick = { onStudentClick(item.student.id, item.student.name) }
+                            )
                         }
                     }
                 }
@@ -275,8 +280,12 @@ fun ModalityStudentsScreen(
 }
 
 @Composable
-private fun StudentItem(item: StudentWithLatestBelt) {
-    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+private fun StudentItem(item: StudentWithLatestBelt, onClick: () -> Unit = {}) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -286,7 +295,8 @@ private fun StudentItem(item: StudentWithLatestBelt) {
             Text(
                 text = item.student.name,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary
             )
             if (item.latestBelt != null) {
                 Text(

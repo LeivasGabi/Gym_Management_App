@@ -74,7 +74,8 @@ fun PaymentScreen(
     onYearSelected: (Int) -> Unit,
     onMonthSelected: (Int) -> Unit,
     onToggleModality: (String) -> Unit,
-    onTogglePayment: (StudentPaymentItem) -> Unit
+    onTogglePayment: (StudentPaymentItem) -> Unit,
+    onStudentClick: (studentId: String, studentName: String) -> Unit = { _, _ -> }
 ) {
     val topBarTitle = when (uiState) {
         is PaymentScreenState.YearPicker -> "Pagamentos"
@@ -120,6 +121,7 @@ fun PaymentScreen(
                 uiState = uiState,
                 onToggleModality = onToggleModality,
                 onTogglePayment = onTogglePayment,
+                onStudentClick = onStudentClick,
                 modifier = Modifier.padding(innerPadding)
             )
 
@@ -256,6 +258,7 @@ private fun DetailView(
     uiState: PaymentScreenState.Detail,
     onToggleModality: (String) -> Unit,
     onTogglePayment: (StudentPaymentItem) -> Unit,
+    onStudentClick: (studentId: String, studentName: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (uiState.groups.isEmpty()) {
@@ -304,9 +307,17 @@ private fun DetailView(
                     ) {
                         StudentPaymentCard(
                             item = item,
-                            onToggle = { onTogglePayment(item) }
+                            onToggle = { onTogglePayment(item) },
+                            onNameClick = { onStudentClick(item.student.id, item.student.name) }
                         )
                     }
+                }
+
+                item(key = "total_${group.modality.id}") {
+                    val paidCount = group.students.count { it.isPaid }
+                    val totalExpected = group.modality.price * group.students.size
+                    val totalPaid = group.modality.price * paidCount
+                    ModalityTotalRow(totalPaid = totalPaid, totalExpected = totalExpected)
                 }
             }
 
@@ -382,7 +393,8 @@ private fun ModalitySectionHeader(
 @Composable
 private fun StudentPaymentCard(
     item: StudentPaymentItem,
-    onToggle: () -> Unit
+    onToggle: () -> Unit,
+    onNameClick: () -> Unit = {}
 ) {
     ElevatedCard(
         modifier = Modifier
@@ -401,8 +413,10 @@ private fun StudentPaymentCard(
                         text = item.student.name,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.primary,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.clickable { onNameClick() }
                     )
                     if (item.isOverdue) {
                         Spacer(modifier = Modifier.size(4.dp))
@@ -439,6 +453,32 @@ private fun StudentPaymentCard(
                 )
             )
         }
+    }
+}
+
+@Composable
+private fun ModalityTotalRow(totalPaid: Double, totalExpected: Double) {
+    val pending = totalExpected - totalPaid
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 8.dp, top = 4.dp, bottom = 2.dp)
+            .padding(horizontal = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Recebido da modalidade",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = "${formatCurrency(totalPaid)} / ${formatCurrency(totalExpected)}",
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.SemiBold,
+            color = if (pending > 0.01) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.tertiary
+        )
     }
 }
 

@@ -55,7 +55,11 @@
     <fragment
         android:id="@+id/paymentFragment"
         android:name="gym.management.presentation.payment.PaymentFragment"
-        android:label="Pagamentos" />
+        android:label="Pagamentos">
+        <action
+            android:id="@+id/action_payment_to_studentDetail"
+            app:destination="@id/studentDetailFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/studentListFragment"
@@ -122,6 +126,10 @@
     <fragment
         android:id="@+id/modalityStudentsFragment"
         android:name="gym.management.presentation.modalities.ModalityStudentsFragment"
-        android:label="Alunos da Modalidade" />
+        android:label="Alunos da Modalidade">
+        <action
+            android:id="@+id/action_modalityStudents_to_studentDetail"
+            app:destination="@id/studentDetailFragment" />
+    </fragment>
 
 </navigation>
