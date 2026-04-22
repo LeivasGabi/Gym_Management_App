@@ -137,6 +137,38 @@ Firestore → RepositoryImpl → ViewModel (StateFlow) → Screen (Compose) → 
 
 ---
 
+## Build Variants
+
+The project uses a **`brand`** flavor dimension combined with two build types, producing four variants:
+
+| Variant | Flavor | Build Type |
+|---|---|---|
+| `kiolJongDebug` | `kiolJong` | debug |
+| `kiolJongRelease` | `kiolJong` | release |
+| `gymManagementDebug` | `gymManagement` | debug |
+| `gymManagementRelease` | `gymManagement` | release |
+
+### Product Flavors
+
+**`kiolJong`** — brand for Grupo Kiol Jong
+- App name: `Grupo Kiol Jong`
+- Logo: custom PNG asset
+- Color palette: Gold (dark mode) / Red (light mode)
+
+**`gymManagement`** — generic gym management brand
+- App name: `Gym Management`
+- Logo: custom vector drawable (`gym.xml`)
+- Color palette: Pink/Magenta launcher background (`#CF0472`)
+- Feature flag: `use_gym_logo = true`
+
+### Build Types
+
+**`debug`** — default development build, no signing configuration required.
+
+**`release`** — production build signed via `keystore.properties` (see Setup). Proguard rules are applied but minification is currently disabled (`isMinifyEnabled = false`).
+
+---
+
 ## Requirements
 
 - **Minimum SDK:** API 26 (Android 8.0)
