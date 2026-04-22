@@ -273,6 +273,15 @@ private fun ModalityItem(modality: Modality, onClick: () -> Unit) {
                     overflow = TextOverflow.Ellipsis
                 )
             }
+            if (modality.frequency.isNotBlank()) {
+                Text(
+                    text = modality.frequency,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
             if (modality.price > 0.0) {
                 Text(
                     text = "R$ %.2f".format(modality.price),

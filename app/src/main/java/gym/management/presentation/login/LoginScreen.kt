@@ -3,7 +3,7 @@ package gym.management.presentation.login
 import android.graphics.BitmapFactory
 import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -39,14 +40,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -95,46 +102,70 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 val context = LocalContext.current
-                val isDark = isSystemInDarkTheme()
-                val logoRes = if (isDark) R.drawable.logo_amarelo else R.drawable.logo_vermelho
-                val logoBitmap = remember(logoRes) {
-                    val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                    BitmapFactory.decodeResource(context.resources, logoRes, opts)
-                    var sample = 1
-                    while (maxOf(opts.outWidth, opts.outHeight) / sample > 300) sample *= 2
-                    BitmapFactory.decodeResource(
-                        context.resources,
-                        logoRes,
-                        BitmapFactory.Options().apply { inSampleSize = sample }
-                    ).asImageBitmap()
-                }
+                val useGymLogo = context.resources.getBoolean(R.bool.use_gym_logo)
                 val shadowColor = MaterialTheme.colorScheme.primary
-                Image(
-                    bitmap = logoBitmap,
-                    contentDescription = "Logo Grupo Kiol Jong",
-                    modifier = Modifier
-                        .size(140.dp)
-                        .drawBehind {
-                            drawIntoCanvas { canvas ->
-                                val paint = Paint().also {
-                                    it.asFrameworkPaint().apply {
-                                        isAntiAlias = true
-                                        color = shadowColor.copy(alpha = 0.55f).toArgb()
-                                        maskFilter = BlurMaskFilter(52f, BlurMaskFilter.Blur.OUTER)
-                                    }
+                val shadowModifier = Modifier
+                    .size(140.dp)
+                    .graphicsLayer { clip = false }
+                    .drawBehind {
+                        drawIntoCanvas { canvas ->
+                            val paint = Paint().also {
+                                it.asFrameworkPaint().apply {
+                                    isAntiAlias = true
+                                    color = shadowColor.copy(alpha = 0.55f).toArgb()
+                                    maskFilter = BlurMaskFilter(52f, BlurMaskFilter.Blur.OUTER)
                                 }
-                                canvas.drawCircle(
-                                    center = Offset(size.width / 2f, size.height / 2f + 6f),
-                                    radius = minOf(size.width, size.height) * 0.5f,
-                                    paint = paint
-                                )
                             }
-                        },
-                    contentScale = ContentScale.Fit
-                )
+                            canvas.drawCircle(
+                                center = Offset(size.width / 2f, size.height / 2f + 6f),
+                                radius = minOf(size.width, size.height) * 0.5f,
+                                paint = paint
+                            )
+                        }
+                    }
+
+                if (useGymLogo) {
+                    Box(
+                        modifier = shadowModifier,
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(140.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primaryContainer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.gym),
+                                contentDescription = stringResource(R.string.app_name),
+                                modifier = Modifier.size(80.dp),
+                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                            )
+                        }
+                    }
+                } else {
+                    val logoBitmap = remember {
+                        val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                        BitmapFactory.decodeResource(context.resources, R.drawable.gym, opts)
+                        var sample = 1
+                        while (maxOf(opts.outWidth, opts.outHeight) / sample > 300) sample *= 2
+                        BitmapFactory.decodeResource(
+                            context.resources,
+                            R.drawable.gym,
+                            BitmapFactory.Options().apply { inSampleSize = sample }
+                        ).asImageBitmap()
+                    }
+                    Image(
+                        bitmap = logoBitmap,
+                        contentDescription = stringResource(R.string.app_name),
+                        modifier = shadowModifier,
+                        contentScale = ContentScale.Fit
+                    )
+                }
 
                 Text(
-                    text = "Grupo Kiol Jong",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary

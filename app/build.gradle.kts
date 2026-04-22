@@ -49,12 +49,24 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+    flavorDimensions += "brand"
+
+    productFlavors {
+        create("kiolJong") {
+            dimension = "brand"
+        }
+        create("gymManagement") {
+            dimension = "brand"
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

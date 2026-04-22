@@ -1,5 +1,7 @@
 package gym.management.presentation.mainmenu
 
+import androidx.compose.ui.res.stringResource
+import gym.management.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -45,7 +47,7 @@ fun MainMenuScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Grupo Kiol Jong",
+                        text = stringResource(R.string.app_name),
                         fontWeight = FontWeight.Bold
                     )
                 },
