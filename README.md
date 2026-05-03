@@ -135,6 +135,37 @@ Firestore → RepositoryImpl → ViewModel (StateFlow) → Screen (Compose) → 
 | **Kotlinx Coroutines Play Services** | Coroutine integration for Firebase Tasks (`await()`) |
 | **Activity Compose** | Compose integration with `ComponentActivity` |
 
+### Testing
+| Library | Purpose |
+|---|---|
+| **JUnit 4** | Unit test runner and assertions |
+| **MockK** | Mocking library for Kotlin (repositories, Firebase) |
+| **Kotlinx Coroutines Test** | `runTest`, `advanceUntilIdle`, `TestDispatcher` for coroutine testing |
+
+---
+
+## Unit Tests
+
+Unit tests cover all ViewModels and live under `app/src/test/`. Each ViewModel test injects mock repositories via the constructor, replacing Firebase with fakes using MockK.
+
+| Test Class | ViewModel | Tests |
+|---|---|---|
+| `LoginViewModelTest` | `LoginViewModel` | login success/error, default error message, resetState |
+| `RegisterViewModelTest` | `RegisterViewModel` | password mismatch (no repo call), register success/error, resetState |
+| `ModalityListViewModelTest` | `ModalityListViewModel` | loading, success, empty list, error, default error message |
+| `StudentListViewModelTest` | `StudentListViewModel` | modality name mapping, unknown modality ignored, empty list, error from each repo |
+| `RegisterModalityViewModelTest` | `RegisterModalityViewModel` | success, schedule conflict, no conflict (different day/time), error, price comma→dot, resetState |
+| `RegisterStudentViewModelTest` | `RegisterStudentViewModel` | modalities loaded, save success/error, userId from FirebaseAuth, resetState |
+| `StudentProfileViewModelTest` | `StudentProfileViewModel` | load success/error, save success/error, no-op without Success state, toggleActive, resetSaveState |
+| `PaymentViewModelTest` | `PaymentViewModel` | YearPicker initial state, MonthPicker/Detail transitions, available months per year, goBack levels, totals, inactive students excluded |
+| `GraduationViewModelTest` | `GraduationViewModel` | load success/error, modality filter, graduation sort order, add/update success/error, resetSaveState |
+| `ModalityStudentsViewModelTest` | `ModalityStudentsViewModel` | active-only filter, modality not found, latest belt mapping, null belt, update/delete success/error, no-op without Success state, reset states |
+
+To run all unit tests:
+```bash
+./gradlew testDebugUnitTest
+```
+
 ---
 
 ## Build Variants
