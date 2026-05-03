@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Grupo Kiol Jong</string>
+
+    <!-- Login -->
+    <string name="login_subtitle">Login to continue</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="cd_hide_password">Hide password</string>
+    <string name="cd_show_password">Show password</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register_prompt">Don\'t have an account? Register</string>
+
+    <!-- Common -->
+    <string name="btn_back">Back</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_logout">Logout</string>
+    <string name="btn_remove">Remove</string>
+    <string name="cd_collapse">Collapse</string>
+    <string name="cd_expand">Expand</string>
+
+    <!-- Main Menu -->
+    <string name="main_menu_prompt">What would you like to do?</string>
+    <string name="menu_students">Students</string>
+    <string name="menu_students_subtitle">Manage grades and view profile</string>
+    <string name="menu_register">Register</string>
+    <string name="menu_register_subtitle">Register new student or modality</string>
+    <string name="menu_payments">Payments</string>
+    <string name="menu_payments_subtitle">Manage payments</string>
+    <string name="menu_modalities">Modalities</string>
+    <string name="menu_modalities_subtitle">View registered modalities</string>
+
+    <!-- Register Account -->
+    <string name="screen_create_account">Create account</string>
+    <string name="register_subtitle">Fill in the data to create your account</string>
+    <string name="label_confirm_password">Confirm password</string>
+    <string name="btn_create_account">Create account</string>
+
+    <!-- Register Selection -->
+    <string name="register_selection_prompt">What would you like to register?</string>
+    <string name="label_student">Student</string>
+    <string name="register_student_subtitle_card">Register a new student</string>
+    <string name="label_modality">Modality</string>
+    <string name="register_modality_subtitle_card">Register a new modality</string>
+
+    <!-- Register Student -->
+    <string name="screen_register_student">Register Student</string>
+    <string name="label_name">Name</string>
+    <string name="label_phone">Phone</string>
+    <string name="label_address">Address</string>
+    <string name="label_registration_date">Registration Date</string>
+    <string name="placeholder_date">dd/mm/yyyy</string>
+    <string name="cd_select_registration_date">Select registration date</string>
+    <string name="label_birth_date">Birth Date</string>
+    <string name="cd_select_date">Select date</string>
+    <string name="label_emergency_contact_name">Emergency Contact Name</string>
+    <string name="label_emergency_contact_phone">Emergency Contact Phone</string>
+    <string name="label_payment_day">Payment day</string>
+    <string name="placeholder_select_day">Select the day</string>
+    <string name="every_day">Every day %d</string>
+    <string name="label_modalities_section">Modalities</string>
+    <string name="btn_save_student">Save Student</string>
+    <string name="dialog_modality_required_title">Modality Required</string>
+    <string name="dialog_modality_required_msg">You need to register at least one modality before registering a student.</string>
+    <string name="btn_add_modality">Add Modality</string>
+
+    <!-- Register Modality -->
+    <string name="screen_register_modality">Register Modality</string>
+    <string name="label_modality_name">Modality Name</string>
+    <string name="label_frequency">Frequency</string>
+    <string name="label_schedules">Schedules</string>
+    <string name="label_schedule">Schedule</string>
+    <string name="placeholder_time">HH:MM</string>
+    <string name="cd_remove_schedule">Remove schedule</string>
+    <string name="btn_add_schedule">Add schedule</string>
+    <string name="label_price">Price (R$)</string>
+    <string name="btn_save_modality">Save Modality</string>
+    <string name="dialog_conflict_title">Schedule Conflict</string>
+    <string name="conflict_msg_single">There is already a modality registered at this same day and time:\n\n%s</string>
+    <string name="conflict_msg_plural">There are already modalities registered at this same day and time:\n\n%s</string>
+    <string name="btn_understood">I understand</string>
+
+    <!-- Student List -->
+    <string name="screen_students">Students</string>
+    <string name="placeholder_search_student">Search student…</string>
+    <string name="msg_no_students">No students registered.</string>
+    <string name="msg_no_results">No results for \"%s\".</string>
+    <string name="label_inactive_students">Inactive students</string>
+
+    <!-- Student Detail -->
+    <string name="what_to_view">What would you like to view?</string>
+    <string name="label_graduation">Graduation</string>
+    <string name="graduation_card_subtitle">View and manage student grades and graduation</string>
+    <string name="label_profile">Profile</string>
+    <string name="profile_card_subtitle">View student registration data</string>
+
+    <!-- Student Profile -->
+    <string name="label_birth_date_profile">Birth date</string>
+    <string name="label_registration_date_profile">Registration date</string>
+    <string name="label_emergency_contact">Emergency Contact</string>
+    <string name="label_contact_name">Contact name</string>
+    <string name="label_contact_phone">Contact phone</string>
+    <string name="msg_data_saved">Data saved successfully!</string>
+    <string name="btn_save_changes">Save changes</string>
+    <string name="label_inactive_student">Inactive student</string>
+    <string name="label_notes">Notes</string>
+
+    <!-- Modality List -->
+    <string name="msg_no_modalities">No modalities registered.</string>
+    <string name="label_inactive">Inactive</string>
+    <string name="label_inactive_modalities">Inactive modalities</string>
+
+    <!-- Modality Students -->
+    <string name="msg_no_active_students_modality">No active students in this modality.</string>
+    <string name="cd_edit_modality">Edit modality</string>
+    <string name="cd_delete_modality">Delete modality</string>
+    <string name="dialog_delete_modality_title">Delete modality</string>
+    <string name="dialog_delete_modality_msg">Are you sure you want to delete the modality \"%s\"? This action cannot be undone.</string>
+    <string name="msg_modality_updated">Modality updated!</string>
+    <string name="dialog_edit_modality_title">Edit Modality</string>
+    <string name="label_active_modality">Active modality</string>
+
+    <!-- Payments -->
+    <string name="screen_payments">Payments</string>
+    <string name="title_select_year">Select the year</string>
+    <string name="title_select_month">Select the month</string>
+    <string name="msg_no_active_students">No active students registered.</string>
+    <string name="payment_due">Due: every day %d</string>
+    <string name="paid_on">Paid on: %s</string>
+    <string name="label_received_modality">Received from modality</string>
+    <string name="label_total_expected">Total expected</string>
+    <string name="label_total_received">Total received</string>
+    <string name="label_pending">Pending</string>
+    <string name="cd_overdue">Overdue</string>
+    <string name="payment_modality_summary">%1$s/month  ·  %2$d/%3$d paid</string>
+
+    <!-- Graduation -->
+    <string name="msg_no_graduation">No graduation recorded.</string>
+    <string name="btn_add_graduation">Add graduation</string>
+    <string name="msg_graduation_saved">Graduation saved successfully!</string>
+    <string name="dialog_add_graduation_title">Add Graduation</string>
+    <string name="dialog_edit_graduation_title">Edit Graduation</string>
+    <string name="label_belt">Belt</string>
+    <string name="placeholder_belt">Ex: Yellow Belt 8 gub</string>
+    <string name="label_general_grade">General grade</string>
+    <string name="label_graduation_date">Graduation date</string>
+    <string name="general_grade_display">General grade: %s</string>
+    <string name="cd_edit_graduation">Edit graduation</string>
+    <string name="label_observation">Observation</string>
+    <string name="placeholder_observation">Summary of student performance…</string>
+
+    <!-- Month names (index 0 = January) -->
+    <string-array name="month_names">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
+    <plurals name="student_count">
+        <item quantity="one">%d student</item>
+        <item quantity="other">%d students</item>
+    </plurals>
+    <plurals name="modality_count">
+        <item quantity="one">%d modality</item>
+        <item quantity="other">%d modalities</item>
+    </plurals>
+</resources>

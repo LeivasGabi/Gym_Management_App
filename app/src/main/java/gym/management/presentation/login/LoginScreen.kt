@@ -172,7 +172,7 @@ fun LoginScreen(
                 )
 
                 Text(
-                    text = "Faça login para continuar",
+                    text = stringResource(R.string.login_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -182,7 +182,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("E-mail") },
+                    label = { Text(stringResource(R.string.label_email)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Email,
@@ -198,7 +198,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Senha") },
+                    label = { Text(stringResource(R.string.label_password)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,
@@ -211,8 +211,8 @@ fun LoginScreen(
                             Icon(
                                 imageVector = if (passwordVisible) Icons.Default.VisibilityOff
                                               else Icons.Default.Visibility,
-                                contentDescription = if (passwordVisible) "Ocultar senha"
-                                                     else "Mostrar senha",
+                                contentDescription = if (passwordVisible) stringResource(R.string.cd_hide_password)
+                                                     else stringResource(R.string.cd_show_password),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -240,12 +240,12 @@ fun LoginScreen(
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Text("Entrar")
+                        Text(stringResource(R.string.btn_login))
                     }
                 }
 
                 TextButton(onClick = onRegisterClick) {
-                    Text("Não tem conta? Registre-se")
+                    Text(stringResource(R.string.btn_register_prompt))
                 }
             }
         }

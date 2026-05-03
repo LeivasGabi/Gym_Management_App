@@ -27,6 +27,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,10 +36,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import gym.management.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,15 +74,20 @@ fun RegisterScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Criar conta") },
+                title = { Text(stringResource(R.string.screen_create_account)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
+                            contentDescription = stringResource(R.string.btn_back),
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
         }
     ) { innerPadding ->
@@ -92,7 +100,7 @@ fun RegisterScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
         ) {
             Text(
-                text = "Preencha os dados para criar sua conta",
+                text = stringResource(R.string.register_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -102,7 +110,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("E-mail") },
+                label = { Text(stringResource(R.string.label_email)) },
                 leadingIcon = {
                     Icon(imageVector = Icons.Default.Email, contentDescription = null)
                 },
@@ -114,7 +122,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Senha") },
+                label = { Text(stringResource(R.string.label_password)) },
                 leadingIcon = {
                     Icon(imageVector = Icons.Default.Lock, contentDescription = null)
                 },
@@ -137,7 +145,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = { Text("Confirmar senha") },
+                label = { Text(stringResource(R.string.label_confirm_password)) },
                 leadingIcon = {
                     Icon(imageVector = Icons.Default.Lock, contentDescription = null)
                 },
@@ -173,7 +181,7 @@ fun RegisterScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Criar conta")
+                    Text(stringResource(R.string.btn_create_account))
                 }
             }
         }

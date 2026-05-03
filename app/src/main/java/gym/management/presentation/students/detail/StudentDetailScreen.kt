@@ -21,8 +21,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import gym.management.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +47,7 @@ fun StudentDetailScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.btn_back),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -65,7 +67,7 @@ fun StudentDetailScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "O que deseja visualizar?",
+                text = stringResource(R.string.what_to_view),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -87,12 +89,12 @@ fun StudentDetailScreen(
                         modifier = Modifier.size(32.dp)
                     )
                     Text(
-                        text = "Graduação",
+                        text = stringResource(R.string.label_graduation),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "Visualizar e gerenciar notas e graduação do aluno",
+                        text = stringResource(R.string.graduation_card_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -116,12 +118,12 @@ fun StudentDetailScreen(
                         modifier = Modifier.size(32.dp)
                     )
                     Text(
-                        text = "Perfil",
+                        text = stringResource(R.string.label_profile),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "Visualizar dados de cadastro do aluno",
+                        text = stringResource(R.string.profile_card_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

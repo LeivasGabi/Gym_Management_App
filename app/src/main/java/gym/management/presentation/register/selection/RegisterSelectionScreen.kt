@@ -18,10 +18,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import gym.management.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,15 +36,20 @@ fun RegisterSelectionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Cadastrar") },
+                title = { Text(stringResource(R.string.menu_register)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
+                            contentDescription = stringResource(R.string.btn_back),
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
         }
     ) { innerPadding ->
@@ -53,7 +61,7 @@ fun RegisterSelectionScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "O que deseja cadastrar?",
+                text = stringResource(R.string.register_selection_prompt),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -75,12 +83,12 @@ fun RegisterSelectionScreen(
                         modifier = Modifier.size(32.dp)
                     )
                     Text(
-                        text = "Aluno",
+                        text = stringResource(R.string.label_student),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "Cadastrar um novo aluno",
+                        text = stringResource(R.string.register_student_subtitle_card),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -104,12 +112,12 @@ fun RegisterSelectionScreen(
                         modifier = Modifier.size(32.dp)
                     )
                     Text(
-                        text = "Modalidade",
+                        text = stringResource(R.string.label_modality),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "Cadastrar uma nova modalidade",
+                        text = stringResource(R.string.register_modality_subtitle_card),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

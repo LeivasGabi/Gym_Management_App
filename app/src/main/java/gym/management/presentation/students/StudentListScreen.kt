@@ -43,10 +43,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import gym.management.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,12 +63,12 @@ fun StudentListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Alunos", fontWeight = FontWeight.Bold) },
+                title = { Text(text = stringResource(R.string.screen_students), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.btn_back),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -122,7 +125,7 @@ fun StudentListScreen(
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
-                        placeholder = { Text("Buscar aluno...") },
+                        placeholder = { Text(stringResource(R.string.placeholder_search_student)) },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Search,
@@ -142,8 +145,8 @@ fun StudentListScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = if (searchQuery.isBlank()) "Nenhum aluno cadastrado."
-                                       else "Nenhum resultado para \"$searchQuery\".",
+                                text = if (searchQuery.isBlank()) stringResource(R.string.msg_no_students)
+                                       else stringResource(R.string.msg_no_results, searchQuery),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
@@ -208,20 +211,21 @@ private fun StudentListContent(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Alunos inativos",
+                                text = stringResource(R.string.label_inactive_students),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                             Text(
-                                text = "${inactive.size} aluno${if (inactive.size > 1) "s" else ""}",
+                                text = pluralStringResource(R.plurals.student_count, inactive.size, inactive.size),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f)
                             )
                         }
                         Icon(
                             imageVector = Icons.Default.ExpandMore,
-                            contentDescription = if (inactiveExpanded) "Recolher" else "Expandir",
+                            contentDescription = if (inactiveExpanded) stringResource(R.string.cd_collapse)
+                                                 else stringResource(R.string.cd_expand),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier
                                 .size(24.dp)

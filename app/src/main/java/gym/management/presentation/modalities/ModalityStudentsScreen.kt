@@ -52,10 +52,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import gym.management.R
 import gym.management.domain.model.Modality
 import gym.management.presentation.common.applyTimeMask
 import gym.management.presentation.common.formatTimeDigits
@@ -80,6 +82,8 @@ fun ModalityStudentsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+
+    val msgModalityUpdated = stringResource(R.string.msg_modality_updated)
 
     LaunchedEffect(deleteState) {
         when (deleteState) {
@@ -108,7 +112,7 @@ fun ModalityStudentsScreen(
         when (editSaveState) {
             is ModalityEditSaveState.Success -> {
                 showEditDialog = false
-                snackbarHostState.showSnackbar("Modalidade atualizada!")
+                snackbarHostState.showSnackbar(msgModalityUpdated)
                 onEditSaveHandled()
             }
             is ModalityEditSaveState.Error -> {
@@ -122,8 +126,10 @@ fun ModalityStudentsScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { if (deleteState !is ModalityDeleteState.Loading) showDeleteDialog = false },
-            title = { Text("Excluir modalidade") },
-            text = { Text("Tem certeza que deseja excluir a modalidade \"${currentModality?.name ?: modalityName}\"? Esta ação não pode ser desfeita.") },
+            title = { Text(stringResource(R.string.dialog_delete_modality_title)) },
+            text = {
+                Text(stringResource(R.string.dialog_delete_modality_msg, currentModality?.name ?: modalityName))
+            },
             confirmButton = {
                 Button(
                     onClick = onDeleteModality,
@@ -139,7 +145,7 @@ fun ModalityStudentsScreen(
                             color = MaterialTheme.colorScheme.onError
                         )
                     } else {
-                        Text("Excluir")
+                        Text(stringResource(R.string.btn_delete))
                     }
                 }
             },
@@ -147,7 +153,7 @@ fun ModalityStudentsScreen(
                 TextButton(
                     onClick = { showDeleteDialog = false },
                     enabled = deleteState !is ModalityDeleteState.Loading
-                ) { Text("Cancelar") }
+                ) { Text(stringResource(R.string.btn_cancel)) }
             }
         )
     }
@@ -182,7 +188,7 @@ fun ModalityStudentsScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.btn_back),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -192,14 +198,14 @@ fun ModalityStudentsScreen(
                         IconButton(onClick = { showEditDialog = true }) {
                             Icon(
                                 imageVector = Icons.Default.Edit,
-                                contentDescription = "Editar modalidade",
+                                contentDescription = stringResource(R.string.cd_edit_modality),
                                 tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                         IconButton(onClick = { showDeleteDialog = true }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = "Excluir modalidade",
+                                contentDescription = stringResource(R.string.cd_delete_modality),
                                 tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
@@ -252,7 +258,7 @@ fun ModalityStudentsScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Nenhum aluno ativo nesta modalidade.",
+                            text = stringResource(R.string.msg_no_active_students_modality),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -329,7 +335,7 @@ private fun EditModalityDialog(
 
     AlertDialog(
         onDismissRequest = { if (!isSaving) onDismiss() },
-        title = { Text("Editar Modalidade") },
+        title = { Text(stringResource(R.string.dialog_edit_modality_title)) },
         text = {
             Column(
                 modifier = Modifier
@@ -340,13 +346,13 @@ private fun EditModalityDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Nome") },
+                    label = { Text(stringResource(R.string.label_name)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Text(
-                    text = "Frequência",
+                    text = stringResource(R.string.label_frequency),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -368,7 +374,7 @@ private fun EditModalityDialog(
                 }
 
                 Text(
-                    text = "Horários",
+                    text = stringResource(R.string.label_schedules),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -393,8 +399,8 @@ private fun EditModalityDialog(
                                     onValueChange = { input ->
                                         schedules = schedules.toMutableList().also { it[index] = applyTimeMask(input) }
                                     },
-                                    label = { Text("Horário") },
-                                    placeholder = { Text("HH:MM") },
+                                    label = { Text(stringResource(R.string.label_schedule)) },
+                                    placeholder = { Text(stringResource(R.string.placeholder_time)) },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     visualTransformation = TimeVisualTransformation(),
                                     singleLine = true,
@@ -409,7 +415,7 @@ private fun EditModalityDialog(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Close,
-                                            contentDescription = "Remover",
+                                            contentDescription = stringResource(R.string.btn_remove),
                                             tint = MaterialTheme.colorScheme.error,
                                             modifier = Modifier.size(20.dp)
                                         )
@@ -428,7 +434,7 @@ private fun EditModalityDialog(
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Adicionar horário", style = MaterialTheme.typography.bodySmall)
+                            Text(stringResource(R.string.btn_add_schedule), style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 }
@@ -436,7 +442,7 @@ private fun EditModalityDialog(
                 OutlinedTextField(
                     value = price,
                     onValueChange = { price = it },
-                    label = { Text("Valor (R$)") },
+                    label = { Text(stringResource(R.string.label_price)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
@@ -448,7 +454,7 @@ private fun EditModalityDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Modalidade ativa",
+                        text = stringResource(R.string.label_active_modality),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Switch(checked = active, onCheckedChange = { active = it })
@@ -472,12 +478,14 @@ private fun EditModalityDialog(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("Salvar")
+                    Text(stringResource(R.string.btn_save))
                 }
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, enabled = !isSaving) { Text("Cancelar") }
+            TextButton(onClick = onDismiss, enabled = !isSaving) {
+                Text(stringResource(R.string.btn_cancel))
+            }
         }
     )
 }

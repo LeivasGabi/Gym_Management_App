@@ -1,3 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Grupo Kiol Jong</string>
+
+    <!-- Login -->
+    <string name="login_subtitle">Faça login para continuar</string>
+    <string name="label_email">E-mail</string>
+    <string name="label_password">Senha</string>
+    <string name="cd_hide_password">Ocultar senha</string>
+    <string name="cd_show_password">Mostrar senha</string>
+    <string name="btn_login">Entrar</string>
+    <string name="btn_register_prompt">Não tem conta? Registre-se</string>
+
+    <!-- Common -->
+    <string name="btn_back">Voltar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="btn_save">Salvar</string>
+    <string name="btn_delete">Excluir</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_logout">Sair</string>
+    <string name="btn_remove">Remover</string>
+    <string name="cd_collapse">Recolher</string>
+    <string name="cd_expand">Expandir</string>
+
+    <!-- Main Menu -->
+    <string name="main_menu_prompt">O que deseja fazer?</string>
+    <string name="menu_students">Alunos</string>
+    <string name="menu_students_subtitle">Gerencie notas e visualize o perfil</string>
+    <string name="menu_register">Cadastrar</string>
+    <string name="menu_register_subtitle">Cadastrar novo aluno ou modalidade</string>
+    <string name="menu_payments">Pagamentos</string>
+    <string name="menu_payments_subtitle">Gerenciar pagamentos</string>
+    <string name="menu_modalities">Modalidades</string>
+    <string name="menu_modalities_subtitle">Visualize as modalidades cadastradas</string>
+
+    <!-- Register Account -->
+    <string name="screen_create_account">Criar conta</string>
+    <string name="register_subtitle">Preencha os dados para criar sua conta</string>
+    <string name="label_confirm_password">Confirmar senha</string>
+    <string name="btn_create_account">Criar conta</string>
+
+    <!-- Register Selection -->
+    <string name="register_selection_prompt">O que deseja cadastrar?</string>
+    <string name="label_student">Aluno</string>
+    <string name="register_student_subtitle_card">Cadastrar um novo aluno</string>
+    <string name="label_modality">Modalidade</string>
+    <string name="register_modality_subtitle_card">Cadastrar uma nova modalidade</string>
+
+    <!-- Register Student -->
+    <string name="screen_register_student">Cadastrar Aluno</string>
+    <string name="label_name">Nome</string>
+    <string name="label_phone">Telefone</string>
+    <string name="label_address">Endereço</string>
+    <string name="label_registration_date">Data de Matrícula</string>
+    <string name="placeholder_date">dd/mm/aaaa</string>
+    <string name="cd_select_registration_date">Selecionar data de matrícula</string>
+    <string name="label_birth_date">Data de Nascimento</string>
+    <string name="cd_select_date">Selecionar data</string>
+    <string name="label_emergency_contact_name">Nome do Contato de Emergência</string>
+    <string name="label_emergency_contact_phone">Telefone do Contato de Emergência</string>
+    <string name="label_payment_day">Dia de pagamento</string>
+    <string name="placeholder_select_day">Selecione o dia</string>
+    <string name="every_day">Todo dia %d</string>
+    <string name="label_modalities_section">Modalidades</string>
+    <string name="btn_save_student">Salvar Aluno</string>
+    <string name="dialog_modality_required_title">Modalidade necessária</string>
+    <string name="dialog_modality_required_msg">Você precisa cadastrar pelo menos uma modalidade antes de cadastrar um aluno.</string>
+    <string name="btn_add_modality">Adicionar Modalidade</string>
+
+    <!-- Register Modality -->
+    <string name="screen_register_modality">Cadastrar Modalidade</string>
+    <string name="label_modality_name">Nome da Modalidade</string>
+    <string name="label_frequency">Frequência</string>
+    <string name="label_schedules">Horários</string>
+    <string name="label_schedule">Horário</string>
+    <string name="placeholder_time">HH:MM</string>
+    <string name="cd_remove_schedule">Remover horário</string>
+    <string name="btn_add_schedule">Adicionar horário</string>
+    <string name="label_price">Valor (R$)</string>
+    <string name="btn_save_modality">Salvar Modalidade</string>
+    <string name="dialog_conflict_title">Conflito de horário</string>
+    <string name="conflict_msg_single">Já existe uma modalidade cadastrada neste mesmo dia e horário:\n\n%s</string>
+    <string name="conflict_msg_plural">Já existem modalidades cadastradas neste mesmo dia e horário:\n\n%s</string>
+    <string name="btn_understood">Entendi</string>
+
+    <!-- Student List -->
+    <string name="screen_students">Alunos</string>
+    <string name="placeholder_search_student">Buscar aluno…</string>
+    <string name="msg_no_students">Nenhum aluno cadastrado.</string>
+    <string name="msg_no_results">Nenhum resultado para \"%s\".</string>
+    <string name="label_inactive_students">Alunos inativos</string>
+
+    <!-- Student Detail -->
+    <string name="what_to_view">O que deseja visualizar?</string>
+    <string name="label_graduation">Graduação</string>
+    <string name="graduation_card_subtitle">Visualizar e gerenciar notas e graduação do aluno</string>
+    <string name="label_profile">Perfil</string>
+    <string name="profile_card_subtitle">Visualizar dados de cadastro do aluno</string>
+
+    <!-- Student Profile -->
+    <string name="label_birth_date_profile">Data de nascimento</string>
+    <string name="label_registration_date_profile">Data de matrícula</string>
+    <string name="label_emergency_contact">Contato de Emergência</string>
+    <string name="label_contact_name">Nome do contato</string>
+    <string name="label_contact_phone">Telefone do contato</string>
+    <string name="msg_data_saved">Dados salvos com sucesso!</string>
+    <string name="btn_save_changes">Salvar alterações</string>
+    <string name="label_inactive_student">Aluno inativo</string>
+    <string name="label_notes">Observações</string>
+
+    <!-- Modality List -->
+    <string name="msg_no_modalities">Nenhuma modalidade cadastrada.</string>
+    <string name="label_inactive">Inativa</string>
+    <string name="label_inactive_modalities">Modalidades inativas</string>
+
+    <!-- Modality Students -->
+    <string name="msg_no_active_students_modality">Nenhum aluno ativo nesta modalidade.</string>
+    <string name="cd_edit_modality">Editar modalidade</string>
+    <string name="cd_delete_modality">Excluir modalidade</string>
+    <string name="dialog_delete_modality_title">Excluir modalidade</string>
+    <string name="dialog_delete_modality_msg">Tem certeza que deseja excluir a modalidade \"%s\"? Esta ação não pode ser desfeita.</string>
+    <string name="msg_modality_updated">Modalidade atualizada!</string>
+    <string name="dialog_edit_modality_title">Editar Modalidade</string>
+    <string name="label_active_modality">Modalidade ativa</string>
+
+    <!-- Payments -->
+    <string name="screen_payments">Pagamentos</string>
+    <string name="title_select_year">Selecione o ano</string>
+    <string name="title_select_month">Selecione o mês</string>
+    <string name="msg_no_active_students">Nenhum aluno ativo cadastrado.</string>
+    <string name="payment_due">Vencimento: todo dia %d</string>
+    <string name="paid_on">Pago em: %s</string>
+    <string name="label_received_modality">Recebido da modalidade</string>
+    <string name="label_total_expected">Total esperado</string>
+    <string name="label_total_received">Total recebido</string>
+    <string name="label_pending">Pendente</string>
+    <string name="cd_overdue">Inadimplente</string>
+    <string name="payment_modality_summary">%1$s/mês  ·  %2$d/%3$d pagos</string>
+
+    <!-- Graduation -->
+    <string name="msg_no_graduation">Nenhuma graduação registrada.</string>
+    <string name="btn_add_graduation">Adicionar graduação</string>
+    <string name="msg_graduation_saved">Graduação salva com sucesso!</string>
+    <string name="dialog_add_graduation_title">Adicionar Graduação</string>
+    <string name="dialog_edit_graduation_title">Editar Graduação</string>
+    <string name="label_belt">Faixa</string>
+    <string name="placeholder_belt">Ex: Faixa Amarela 8 gub</string>
+    <string name="label_general_grade">Nota geral</string>
+    <string name="label_graduation_date">Data da graduação</string>
+    <string name="general_grade_display">Nota geral: %s</string>
+    <string name="cd_edit_graduation">Editar graduação</string>
+    <string name="label_observation">Observação</string>
+    <string name="placeholder_observation">Resumo sobre o desempenho do aluno…</string>
+
+    <!-- Month names (index 0 = January) -->
+    <string-array name="month_names">
+        <item>Janeiro</item>
+        <item>Fevereiro</item>
+        <item>Março</item>
+        <item>Abril</item>
+        <item>Maio</item>
+        <item>Junho</item>
+        <item>Julho</item>
+        <item>Agosto</item>
+        <item>Setembro</item>
+        <item>Outubro</item>
+        <item>Novembro</item>
+        <item>Dezembro</item>
+    </string-array>
+
+    <plurals name="student_count">
+        <item quantity="one">%d aluno</item>
+        <item quantity="other">%d alunos</item>
+    </plurals>
+    <plurals name="modality_count">
+        <item quantity="one">%d modalidade</item>
+        <item quantity="other">%d modalidades</item>
+    </plurals>
 </resources>

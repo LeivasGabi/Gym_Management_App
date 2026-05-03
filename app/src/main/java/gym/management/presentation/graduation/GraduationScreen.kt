@@ -54,10 +54,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import gym.management.R
 import gym.management.domain.model.Graduation
 import gym.management.domain.model.Modality
 import java.text.SimpleDateFormat
@@ -84,12 +86,14 @@ fun GraduationScreen(
     var showAddDialog by rememberSaveable { mutableStateOf(false) }
     var editingGraduation by remember { mutableStateOf<Graduation?>(null) }
 
+    val msgGraduationSaved = stringResource(R.string.msg_graduation_saved)
+
     LaunchedEffect(saveState) {
         when (saveState) {
             is GraduationSaveState.Success -> {
                 showAddDialog = false
                 editingGraduation = null
-                snackbarHostState.showSnackbar("Graduação salva com sucesso!")
+                snackbarHostState.showSnackbar(msgGraduationSaved)
                 onSaveHandled()
             }
             is GraduationSaveState.Error -> {
@@ -100,7 +104,8 @@ fun GraduationScreen(
         }
     }
 
-    val title = if (uiState is GraduationUiState.Success) uiState.studentName else "Graduação"
+    val graduationLabel = stringResource(R.string.label_graduation)
+    val title = if (uiState is GraduationUiState.Success) uiState.studentName else graduationLabel
 
     Scaffold(
         topBar = {
@@ -110,7 +115,7 @@ fun GraduationScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.btn_back),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -129,7 +134,7 @@ fun GraduationScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Adicionar graduação",
+                        contentDescription = stringResource(R.string.btn_add_graduation),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -177,7 +182,7 @@ fun GraduationScreen(
 
                 if (showAddDialog) {
                     GraduationDialog(
-                        title = "Adicionar Graduação",
+                        title = stringResource(R.string.dialog_add_graduation_title),
                         modalities = uiState.studentModalities,
                         isSaving = saveState is GraduationSaveState.Loading,
                         onDismiss = { showAddDialog = false },
@@ -189,7 +194,7 @@ fun GraduationScreen(
 
                 editingGraduation?.let { graduation ->
                     GraduationDialog(
-                        title = "Editar Graduação",
+                        title = stringResource(R.string.dialog_edit_graduation_title),
                         modalities = uiState.studentModalities,
                         initial = graduation,
                         isSaving = saveState is GraduationSaveState.Loading,
@@ -231,7 +236,7 @@ private fun GraduationContent(
                 modifier = Modifier.padding(24.dp)
             ) {
                 Text(
-                    text = "Nenhuma graduação registrada.",
+                    text = stringResource(R.string.msg_no_graduation),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -242,7 +247,7 @@ private fun GraduationContent(
                         contentDescription = null,
                         modifier = Modifier.padding(end = 8.dp)
                     )
-                    Text("Adicionar graduação")
+                    Text(stringResource(R.string.btn_add_graduation))
                 }
             }
         }
@@ -325,7 +330,7 @@ private fun GraduationCard(
                 IconButton(onClick = onEditClick) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Editar graduação",
+                        contentDescription = stringResource(R.string.cd_edit_graduation),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -333,7 +338,7 @@ private fun GraduationCard(
 
             if (graduation.generalGrade.isNotBlank()) {
                 Text(
-                    text = "Nota geral: ${graduation.generalGrade}",
+                    text = stringResource(R.string.general_grade_display, graduation.generalGrade),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -388,10 +393,12 @@ private fun GraduationDialog(
                 Button(onClick = {
                     datePickerState.selectedDateMillis?.let { selectedDateMillis = it }
                     showDatePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.btn_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancelar") }
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(R.string.btn_cancel))
+                }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -416,7 +423,7 @@ private fun GraduationDialog(
                         value = selectedModality?.name ?: "",
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Modalidade") },
+                        label = { Text(stringResource(R.string.label_modality)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded) },
                         modifier = Modifier
                             .menuAnchor(MenuAnchorType.PrimaryNotEditable)
@@ -441,8 +448,8 @@ private fun GraduationDialog(
                 OutlinedTextField(
                     value = belt,
                     onValueChange = { belt = it },
-                    label = { Text("Faixa") },
-                    placeholder = { Text("Ex: Faixa Amarela 8 gub") },
+                    label = { Text(stringResource(R.string.label_belt)) },
+                    placeholder = { Text(stringResource(R.string.placeholder_belt)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -450,7 +457,7 @@ private fun GraduationDialog(
                 OutlinedTextField(
                     value = generalGrade,
                     onValueChange = { generalGrade = it },
-                    label = { Text("Nota geral") },
+                    label = { Text(stringResource(R.string.label_general_grade)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -459,12 +466,12 @@ private fun GraduationDialog(
                     value = selectedDateFormatted,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Data da graduação") },
+                    label = { Text(stringResource(R.string.label_graduation_date)) },
                     trailingIcon = {
                         IconButton(onClick = { showDatePicker = true }) {
                             Icon(
                                 imageVector = Icons.Default.CalendarMonth,
-                                contentDescription = "Selecionar data"
+                                contentDescription = stringResource(R.string.cd_select_date)
                             )
                         }
                     },
@@ -474,8 +481,8 @@ private fun GraduationDialog(
                 OutlinedTextField(
                     value = observation,
                     onValueChange = { observation = it },
-                    label = { Text("Observação") },
-                    placeholder = { Text("Resumo sobre o desempenho do aluno...") },
+                    label = { Text(stringResource(R.string.label_observation)) },
+                    placeholder = { Text(stringResource(R.string.placeholder_observation)) },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 4,
                     maxLines = 6
@@ -497,13 +504,13 @@ private fun GraduationDialog(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("Salvar")
+                    Text(stringResource(R.string.btn_save))
                 }
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss, enabled = !isSaving) {
-                Text("Cancelar")
+                Text(stringResource(R.string.btn_cancel))
             }
         }
     )

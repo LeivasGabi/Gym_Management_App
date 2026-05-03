@@ -36,6 +36,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,9 +45,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import gym.management.R
 import gym.management.presentation.common.applyTimeMask
 import gym.management.presentation.common.formatTimeDigits
 import gym.management.presentation.common.TimeVisualTransformation
@@ -81,15 +84,20 @@ fun RegisterModalityScreen(
 
     if (uiState is RegisterModalityUiState.Conflict) {
         val names = uiState.conflictingNames
+        val listText = names.joinToString("\n") { "• $it" }
+        val conflictMsg = if (names.size > 1) {
+            stringResource(R.string.conflict_msg_plural, listText)
+        } else {
+            stringResource(R.string.conflict_msg_single, listText)
+        }
         AlertDialog(
             onDismissRequest = { onErrorShown() },
-            title = { Text("Conflito de horário") },
-            text = {
-                val listText = names.joinToString("\n") { "• $it" }
-                Text("Já existe${if (names.size > 1) "m" else ""} modalidade${if (names.size > 1) "s" else ""} cadastrada${if (names.size > 1) "s" else ""} neste mesmo dia e horário:\n\n$listText")
-            },
+            title = { Text(stringResource(R.string.dialog_conflict_title)) },
+            text = { Text(conflictMsg) },
             confirmButton = {
-                Button(onClick = { onErrorShown() }) { Text("Entendi") }
+                Button(onClick = { onErrorShown() }) {
+                    Text(stringResource(R.string.btn_understood))
+                }
             }
         )
     }
@@ -98,15 +106,20 @@ fun RegisterModalityScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Cadastrar Modalidade") },
+                title = { Text(stringResource(R.string.screen_register_modality)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
+                            contentDescription = stringResource(R.string.btn_back),
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
         }
     ) { innerPadding ->
@@ -123,13 +136,13 @@ fun RegisterModalityScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Nome da Modalidade") },
+                label = { Text(stringResource(R.string.label_modality_name)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Text(
-                text = "Frequência",
+                text = stringResource(R.string.label_frequency),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 4.dp)
@@ -153,7 +166,7 @@ fun RegisterModalityScreen(
             }
 
             Text(
-                text = "Horários",
+                text = stringResource(R.string.label_schedules),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 4.dp)
@@ -180,8 +193,8 @@ fun RegisterModalityScreen(
                                 onValueChange = { input ->
                                     schedules = schedules.toMutableList().also { it[index] = applyTimeMask(input) }
                                 },
-                                label = { Text("Horário") },
-                                placeholder = { Text("HH:MM") },
+                                label = { Text(stringResource(R.string.label_schedule)) },
+                                placeholder = { Text(stringResource(R.string.placeholder_time)) },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 visualTransformation = TimeVisualTransformation(),
                                 singleLine = true,
@@ -193,7 +206,7 @@ fun RegisterModalityScreen(
                                 }) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
-                                        contentDescription = "Remover horário",
+                                        contentDescription = stringResource(R.string.cd_remove_schedule),
                                         tint = MaterialTheme.colorScheme.error
                                     )
                                 }
@@ -211,7 +224,7 @@ fun RegisterModalityScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Adicionar horário")
+                        Text(stringResource(R.string.btn_add_schedule))
                     }
                 }
             }
@@ -219,7 +232,7 @@ fun RegisterModalityScreen(
             OutlinedTextField(
                 value = price,
                 onValueChange = { price = it },
-                label = { Text("Valor (R$)") },
+                label = { Text(stringResource(R.string.label_price)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -248,7 +261,7 @@ fun RegisterModalityScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Salvar Modalidade")
+                    Text(stringResource(R.string.btn_save_modality))
                 }
             }
 

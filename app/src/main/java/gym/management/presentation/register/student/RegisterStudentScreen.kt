@@ -37,6 +37,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,9 +47,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import gym.management.R
 import gym.management.domain.model.Modality
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -110,16 +113,16 @@ fun RegisterStudentScreen(
     if (modalitiesLoaded && modalities.isEmpty()) {
         AlertDialog(
             onDismissRequest = {},
-            title = { Text("Modalidade necessária") },
-            text = { Text("Você precisa cadastrar pelo menos uma modalidade antes de cadastrar um aluno.") },
+            title = { Text(stringResource(R.string.dialog_modality_required_title)) },
+            text = { Text(stringResource(R.string.dialog_modality_required_msg)) },
             confirmButton = {
                 Button(onClick = onAddModalityClick) {
-                    Text("Adicionar Modalidade")
+                    Text(stringResource(R.string.btn_add_modality))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onNavigateBack) {
-                    Text("Voltar")
+                    Text(stringResource(R.string.btn_back))
                 }
             }
         )
@@ -129,15 +132,20 @@ fun RegisterStudentScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Cadastrar Aluno") },
+                title = { Text(stringResource(R.string.screen_register_student)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar"
+                            contentDescription = stringResource(R.string.btn_back),
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
         }
     ) { innerPadding ->
@@ -154,7 +162,7 @@ fun RegisterStudentScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Nome") },
+                label = { Text(stringResource(R.string.label_name)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -162,7 +170,7 @@ fun RegisterStudentScreen(
             OutlinedTextField(
                 value = phone,
                 onValueChange = { phone = it },
-                label = { Text("Telefone") },
+                label = { Text(stringResource(R.string.label_phone)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -171,7 +179,7 @@ fun RegisterStudentScreen(
             OutlinedTextField(
                 value = address,
                 onValueChange = { address = it },
-                label = { Text("Endereço") },
+                label = { Text(stringResource(R.string.label_address)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -186,10 +194,12 @@ fun RegisterStudentScreen(
                                 birthDate = dateFormatter.format(Date(normalized))
                             }
                             showDatePicker = false
-                        }) { Text("OK") }
+                        }) { Text(stringResource(R.string.btn_ok)) }
                     },
                     dismissButton = {
-                        TextButton(onClick = { showDatePicker = false }) { Text("Cancelar") }
+                        TextButton(onClick = { showDatePicker = false }) {
+                            Text(stringResource(R.string.btn_cancel))
+                        }
                     }
                 ) {
                     DatePicker(state = datePickerState)
@@ -207,10 +217,12 @@ fun RegisterStudentScreen(
                                 registrationDateText = dateFormatter.format(Date(normalized))
                             }
                             showRegistrationDatePicker = false
-                        }) { Text("OK") }
+                        }) { Text(stringResource(R.string.btn_ok)) }
                     },
                     dismissButton = {
-                        TextButton(onClick = { showRegistrationDatePicker = false }) { Text("Cancelar") }
+                        TextButton(onClick = { showRegistrationDatePicker = false }) {
+                            Text(stringResource(R.string.btn_cancel))
+                        }
                     }
                 ) {
                     DatePicker(state = registrationDatePickerState)
@@ -221,13 +233,13 @@ fun RegisterStudentScreen(
                 value = registrationDateText,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Data de Matrícula") },
-                placeholder = { Text("dd/mm/aaaa") },
+                label = { Text(stringResource(R.string.label_registration_date)) },
+                placeholder = { Text(stringResource(R.string.placeholder_date)) },
                 trailingIcon = {
                     IconButton(onClick = { showRegistrationDatePicker = true }) {
                         Icon(
                             imageVector = Icons.Default.DateRange,
-                            contentDescription = "Selecionar data de matrícula"
+                            contentDescription = stringResource(R.string.cd_select_registration_date)
                         )
                     }
                 },
@@ -239,13 +251,13 @@ fun RegisterStudentScreen(
                 value = birthDate,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Data de Nascimento") },
-                placeholder = { Text("dd/mm/aaaa") },
+                label = { Text(stringResource(R.string.label_birth_date)) },
+                placeholder = { Text(stringResource(R.string.placeholder_date)) },
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
                         Icon(
                             imageVector = Icons.Default.DateRange,
-                            contentDescription = "Selecionar data"
+                            contentDescription = stringResource(R.string.cd_select_date)
                         )
                     }
                 },
@@ -256,7 +268,7 @@ fun RegisterStudentScreen(
             OutlinedTextField(
                 value = emergencyContactName,
                 onValueChange = { emergencyContactName = it },
-                label = { Text("Nome do Contato de Emergência") },
+                label = { Text(stringResource(R.string.label_emergency_contact_name)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -264,7 +276,7 @@ fun RegisterStudentScreen(
             OutlinedTextField(
                 value = emergencyContact,
                 onValueChange = { emergencyContact = it },
-                label = { Text("Telefone do Contato de Emergência") },
+                label = { Text(stringResource(R.string.label_emergency_contact_phone)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -275,11 +287,11 @@ fun RegisterStudentScreen(
                 onExpandedChange = { paymentDayExpanded = it }
             ) {
                 OutlinedTextField(
-                    value = if (paymentDay == 0) "" else "Todo dia $paymentDay",
+                    value = if (paymentDay == 0) "" else stringResource(R.string.every_day, paymentDay),
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Dia de pagamento") },
-                    placeholder = { Text("Selecione o dia") },
+                    label = { Text(stringResource(R.string.label_payment_day)) },
+                    placeholder = { Text(stringResource(R.string.placeholder_select_day)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = paymentDayExpanded) },
                     modifier = Modifier
                         .menuAnchor(MenuAnchorType.PrimaryNotEditable)
@@ -291,7 +303,7 @@ fun RegisterStudentScreen(
                 ) {
                     (1..31).forEach { day ->
                         DropdownMenuItem(
-                            text = { Text("Todo dia $day") },
+                            text = { Text(stringResource(R.string.every_day, day)) },
                             onClick = {
                                 paymentDay = day
                                 paymentDayExpanded = false
@@ -303,7 +315,7 @@ fun RegisterStudentScreen(
 
             if (modalities.isNotEmpty()) {
                 Text(
-                    text = "Modalidades",
+                    text = stringResource(R.string.label_modalities_section),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(top = 4.dp)
@@ -366,7 +378,7 @@ fun RegisterStudentScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Salvar Aluno")
+                    Text(stringResource(R.string.btn_save_student))
                 }
             }
 

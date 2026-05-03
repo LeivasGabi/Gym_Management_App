@@ -42,10 +42,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import gym.management.R
 import gym.management.domain.model.Modality
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +63,7 @@ fun ModalityListScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Modalidades",
+                        text = stringResource(R.string.menu_modalities),
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -68,7 +71,7 @@ fun ModalityListScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.btn_back),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -120,7 +123,7 @@ fun ModalityListScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Nenhuma modalidade cadastrada.",
+                            text = stringResource(R.string.msg_no_modalities),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -185,20 +188,21 @@ private fun ModalityListContent(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Modalidades inativas",
+                                text = stringResource(R.string.label_inactive_modalities),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                             Text(
-                                text = "${inactive.size} modalidade${if (inactive.size > 1) "s" else ""}",
+                                text = pluralStringResource(R.plurals.modality_count, inactive.size, inactive.size),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f)
                             )
                         }
                         Icon(
                             imageVector = Icons.Default.ExpandMore,
-                            contentDescription = if (inactiveExpanded) "Recolher" else "Expandir",
+                            contentDescription = if (inactiveExpanded) stringResource(R.string.cd_collapse)
+                                                 else stringResource(R.string.cd_expand),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier
                                 .size(24.dp)
@@ -254,7 +258,7 @@ private fun ModalityItem(modality: Modality, onClick: () -> Unit) {
                         shape = MaterialTheme.shapes.small
                     ) {
                         Text(
-                            text = "Inativa",
+                            text = stringResource(R.string.label_inactive),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onErrorContainer,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)

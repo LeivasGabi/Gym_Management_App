@@ -43,9 +43,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import gym.management.R
 import gym.management.domain.model.Modality
 import gym.management.domain.model.Student
 import java.text.SimpleDateFormat
@@ -63,11 +65,12 @@ fun StudentProfileScreen(
     onSaveHandled: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val msgDataSaved = stringResource(R.string.msg_data_saved)
 
     LaunchedEffect(saveState) {
         when (saveState) {
             is SaveState.Success -> {
-                snackbarHostState.showSnackbar("Dados salvos com sucesso!")
+                snackbarHostState.showSnackbar(msgDataSaved)
                 onSaveHandled()
             }
             is SaveState.Error -> {
@@ -78,19 +81,21 @@ fun StudentProfileScreen(
         }
     }
 
+    val profileLabel = stringResource(R.string.label_profile)
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     val title = if (uiState is StudentProfileUiState.Success)
-                        uiState.student.name else "Perfil"
+                        uiState.student.name else profileLabel
                     Text(text = title, fontWeight = FontWeight.Bold)
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.btn_back),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -186,7 +191,7 @@ private fun StudentProfileContent(
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Nome") },
+            label = { Text(stringResource(R.string.label_name)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -194,7 +199,7 @@ private fun StudentProfileContent(
         OutlinedTextField(
             value = birthDate,
             onValueChange = { birthDate = it },
-            label = { Text("Data de nascimento") },
+            label = { Text(stringResource(R.string.label_birth_date_profile)) },
             placeholder = { Text("dd/MM/yyyy") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
@@ -202,7 +207,7 @@ private fun StudentProfileContent(
         OutlinedTextField(
             value = registrationDateText,
             onValueChange = { registrationDateText = it },
-            label = { Text("Data de matrícula") },
+            label = { Text(stringResource(R.string.label_registration_date_profile)) },
             placeholder = { Text("dd/MM/yyyy") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
@@ -213,7 +218,7 @@ private fun StudentProfileContent(
         OutlinedTextField(
             value = phone,
             onValueChange = { phone = it },
-            label = { Text("Telefone") },
+            label = { Text(stringResource(R.string.label_phone)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -221,7 +226,7 @@ private fun StudentProfileContent(
         OutlinedTextField(
             value = address,
             onValueChange = { address = it },
-            label = { Text("Endereço") },
+            label = { Text(stringResource(R.string.label_address)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -229,7 +234,7 @@ private fun StudentProfileContent(
         HorizontalDivider()
 
         Text(
-            text = "Contato de Emergência",
+            text = stringResource(R.string.label_emergency_contact),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -238,7 +243,7 @@ private fun StudentProfileContent(
         OutlinedTextField(
             value = emergencyContactName,
             onValueChange = { emergencyContactName = it },
-            label = { Text("Nome do contato") },
+            label = { Text(stringResource(R.string.label_contact_name)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -246,7 +251,7 @@ private fun StudentProfileContent(
         OutlinedTextField(
             value = emergencyContact,
             onValueChange = { emergencyContact = it },
-            label = { Text("Telefone do contato") },
+            label = { Text(stringResource(R.string.label_contact_phone)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -258,11 +263,11 @@ private fun StudentProfileContent(
             onExpandedChange = { paymentDayExpanded = it }
         ) {
             OutlinedTextField(
-                value = if (paymentDay == 0) "" else "Todo dia $paymentDay",
+                value = if (paymentDay == 0) "" else stringResource(R.string.every_day, paymentDay),
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Dia de pagamento") },
-                placeholder = { Text("Selecione o dia") },
+                label = { Text(stringResource(R.string.label_payment_day)) },
+                placeholder = { Text(stringResource(R.string.placeholder_select_day)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = paymentDayExpanded) },
                 modifier = Modifier
                     .menuAnchor(MenuAnchorType.PrimaryNotEditable)
@@ -274,7 +279,7 @@ private fun StudentProfileContent(
             ) {
                 (1..31).forEach { day ->
                     DropdownMenuItem(
-                        text = { Text("Todo dia $day") },
+                        text = { Text(stringResource(R.string.every_day, day)) },
                         onClick = {
                             paymentDay = day
                             paymentDayExpanded = false
@@ -288,7 +293,7 @@ private fun StudentProfileContent(
             HorizontalDivider()
 
             Text(
-                text = "Modalidades",
+                text = stringResource(R.string.label_modalities_section),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -332,7 +337,7 @@ private fun StudentProfileContent(
         OutlinedTextField(
             value = notes,
             onValueChange = { notes = it },
-            label = { Text("Observações") },
+            label = { Text(stringResource(R.string.label_notes)) },
             modifier = Modifier.fillMaxWidth(),
             minLines = 3,
             maxLines = 6
@@ -355,7 +360,7 @@ private fun StudentProfileContent(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
-                Text("Salvar alterações")
+                Text(stringResource(R.string.btn_save_changes))
             }
         }
 
@@ -367,7 +372,7 @@ private fun StudentProfileContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Aluno inativo",
+                text = stringResource(R.string.label_inactive_student),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.weight(1f)
@@ -379,4 +384,3 @@ private fun StudentProfileContent(
         }
     }
 }
-

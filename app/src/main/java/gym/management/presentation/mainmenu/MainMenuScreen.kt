@@ -55,7 +55,7 @@ fun MainMenuScreen(
                     IconButton(onClick = onLogoutClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Logout,
-                            contentDescription = "Sair",
+                            contentDescription = stringResource(R.string.btn_logout),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -78,36 +78,36 @@ fun MainMenuScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "O que deseja fazer?",
+                text = stringResource(R.string.main_menu_prompt),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             MenuCard(
                 icon = Icons.Default.Group,
-                title = "Alunos",
-                subtitle = "Gerencie notas e visualize o perfil",
+                title = stringResource(R.string.menu_students),
+                subtitle = stringResource(R.string.menu_students_subtitle),
                 onClick = onStudentsClick
             )
 
             MenuCard(
                 icon = Icons.Default.PersonAdd,
-                title = "Cadastrar",
-                subtitle = "Cadastrar novo aluno ou modalidade",
+                title = stringResource(R.string.menu_register),
+                subtitle = stringResource(R.string.menu_register_subtitle),
                 onClick = onRegisterClick
             )
 
             MenuCard(
                 icon = Icons.Default.AttachMoney,
-                title = "Pagamentos",
-                subtitle = "Gerenciar pagamentos",
+                title = stringResource(R.string.menu_payments),
+                subtitle = stringResource(R.string.menu_payments_subtitle),
                 onClick = onPaymentsClick
             )
 
             MenuCard(
                 icon = Icons.Default.FitnessCenter,
-                title = "Modalidades",
-                subtitle = "Visualize as modalidades cadastradas",
+                title = stringResource(R.string.menu_modalities),
+                subtitle = stringResource(R.string.menu_modalities_subtitle),
                 onClick = onModalitiesClick
             )
 

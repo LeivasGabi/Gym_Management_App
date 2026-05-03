@@ -42,23 +42,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import gym.management.R
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 private val ptBR = Locale("pt", "BR")
-
-private fun monthName(month: Int): String = when (month) {
-    1 -> "Janeiro"; 2 -> "Fevereiro"; 3 -> "Março"; 4 -> "Abril"
-    5 -> "Maio"; 6 -> "Junho"; 7 -> "Julho"; 8 -> "Agosto"
-    9 -> "Setembro"; 10 -> "Outubro"; 11 -> "Novembro"; 12 -> "Dezembro"
-    else -> ""
-}
 
 private fun formatCurrency(value: Double): String =
     NumberFormat.getCurrencyInstance(ptBR).format(value)
@@ -77,11 +73,13 @@ fun PaymentScreen(
     onTogglePayment: (StudentPaymentItem) -> Unit,
     onStudentClick: (studentId: String, studentName: String) -> Unit = { _, _ -> }
 ) {
+    val monthNames = stringArrayResource(R.array.month_names)
+
     val topBarTitle = when (uiState) {
-        is PaymentScreenState.YearPicker -> "Pagamentos"
+        is PaymentScreenState.YearPicker -> stringResource(R.string.screen_payments)
         is PaymentScreenState.MonthPicker -> "${uiState.year}"
-        is PaymentScreenState.Detail -> "${monthName(uiState.month)} ${uiState.year}"
-        is PaymentScreenState.DetailError -> "${monthName(uiState.month)} ${uiState.year}"
+        is PaymentScreenState.Detail -> "${monthNames.getOrElse(uiState.month - 1) { "" }} ${uiState.year}"
+        is PaymentScreenState.DetailError -> "${monthNames.getOrElse(uiState.month - 1) { "" }} ${uiState.year}"
     }
 
     Scaffold(
@@ -92,7 +90,7 @@ fun PaymentScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Voltar",
+                            contentDescription = stringResource(R.string.btn_back),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -113,6 +111,7 @@ fun PaymentScreen(
 
             is PaymentScreenState.MonthPicker -> MonthPickerView(
                 months = uiState.months,
+                monthNames = monthNames,
                 onMonthSelected = onMonthSelected,
                 modifier = Modifier.padding(innerPadding)
             )
@@ -124,7 +123,6 @@ fun PaymentScreen(
                 onStudentClick = onStudentClick,
                 modifier = Modifier.padding(innerPadding)
             )
-
 
             is PaymentScreenState.DetailError -> {
                 Text(
@@ -156,7 +154,7 @@ private fun YearPickerView(
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Selecione o ano",
+                text = stringResource(R.string.title_select_year),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
@@ -200,6 +198,7 @@ private fun YearPickerView(
 @Composable
 private fun MonthPickerView(
     months: List<Int>,
+    monthNames: Array<String>,
     onMonthSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -212,7 +211,7 @@ private fun MonthPickerView(
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Selecione o mês",
+                text = stringResource(R.string.title_select_month),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
@@ -239,7 +238,7 @@ private fun MonthPickerView(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = monthName(month),
+                        text = monthNames.getOrElse(month - 1) { "" },
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -270,7 +269,7 @@ private fun DetailView(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Nenhum aluno ativo cadastrado.",
+                text = stringResource(R.string.msg_no_active_students),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -371,7 +370,7 @@ private fun ModalitySectionHeader(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "${formatCurrency(group.modality.price)}/mês  ·  $paid/$total pagos",
+                    text = stringResource(R.string.payment_modality_summary, formatCurrency(group.modality.price), paid, total),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f),
                     maxLines = 1,
@@ -380,7 +379,8 @@ private fun ModalitySectionHeader(
             }
             Icon(
                 imageVector = Icons.Default.ExpandMore,
-                contentDescription = if (group.isExpanded) "Recolher" else "Expandir",
+                contentDescription = if (group.isExpanded) stringResource(R.string.cd_collapse)
+                                     else stringResource(R.string.cd_expand),
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
                     .size(24.dp)
@@ -422,7 +422,7 @@ private fun StudentPaymentCard(
                         Spacer(modifier = Modifier.size(4.dp))
                         Icon(
                             imageVector = Icons.Default.Warning,
-                            contentDescription = "Inadimplente",
+                            contentDescription = stringResource(R.string.cd_overdue),
                             tint = Color(0xFFE65100),
                             modifier = Modifier.size(14.dp)
                         )
@@ -430,14 +430,14 @@ private fun StudentPaymentCard(
                 }
                 if (item.student.paymentDay > 0) {
                     Text(
-                        text = "Vencimento: todo dia ${item.student.paymentDay}",
+                        text = stringResource(R.string.payment_due, item.student.paymentDay),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 if (item.isPaid && item.payment?.paidAt != null) {
                     Text(
-                        text = "Pago em: ${formatDate(item.payment.paidAt)}",
+                        text = stringResource(R.string.paid_on, formatDate(item.payment.paidAt)),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.Medium
@@ -468,7 +468,7 @@ private fun ModalityTotalRow(totalPaid: Double, totalExpected: Double) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Recebido da modalidade",
+            text = stringResource(R.string.label_received_modality),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -505,7 +505,7 @@ private fun PaymentFooter(totalPaid: Double, totalExpected: Double) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Total esperado",
+                    text = stringResource(R.string.label_total_expected),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -520,7 +520,7 @@ private fun PaymentFooter(totalPaid: Double, totalExpected: Double) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Total recebido",
+                    text = stringResource(R.string.label_total_received),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -539,7 +539,7 @@ private fun PaymentFooter(totalPaid: Double, totalExpected: Double) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Pendente",
+                        text = stringResource(R.string.label_pending),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error
                     )
