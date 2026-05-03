@@ -215,3 +215,7 @@ The project uses a **`brand`** flavor dimension combined with two build types, p
 2. Create a project in the [Firebase Console](https://console.firebase.google.com) with **Authentication** (email/password) and **Firestore** enabled
 3. Download the `google-services.json` file and place it inside `app/`
 4. Open the project in Android Studio and run
+
+<img width="738" height="1600" alt="WhatsApp Image 2026-05-03 at 20 06 08" src="https://github.com/user-attachments/assets/9756cd35-4629-4a45-988e-6630a35f5765" />
+<img width="738" height="1600" alt="WhatsApp Image 2026-05-03 at 20 06 07 (1)" src="https://github.com/user-attachments/assets/b43bbe7a-b227-480e-b9c5-d0d79215090f" />
+
