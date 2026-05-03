@@ -21,10 +21,9 @@ class ModalityRepositoryImpl(
         val userId = auth.currentUser?.uid ?: run { trySend(emptyList()); close(); return@callbackFlow }
         val listener = collection.whereEqualTo("userId", userId).addSnapshotListener { snapshot, error ->
             if (error != null) { close(error); return@addSnapshotListener }
-            val modalities = (snapshot?.toObjects(Modality::class.java) ?: emptyList()).map { m ->
-                if (m.schedules.isEmpty() && m.schedule.isNotBlank()) m.copy(schedules = listOf(m.schedule))
-                else m
-            }
+            val modalities = (snapshot?.toObjects(Modality::class.java) ?: emptyList())
+                .map { m -> if (m.schedules.isEmpty() && m.schedule.isNotBlank()) m.copy(schedules = listOf(m.schedule)) else m }
+                .sortedBy { it.name.lowercase() }
             trySend(modalities)
         }
         awaitClose { listener.remove() }

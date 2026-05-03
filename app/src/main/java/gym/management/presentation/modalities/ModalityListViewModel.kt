@@ -8,6 +8,7 @@ import gym.management.domain.repository.ModalityRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class ModalityListViewModel(
@@ -19,9 +20,9 @@ class ModalityListViewModel(
 
     init {
         viewModelScope.launch {
-            modalityRepository.observeAll().collect { modalities ->
-                _uiState.value = ModalityListUiState.Success(modalities)
-            }
+            modalityRepository.observeAll()
+                .catch { e -> _uiState.value = ModalityListUiState.Error(e.message ?: "Erro desconhecido") }
+                .collect { modalities -> _uiState.value = ModalityListUiState.Success(modalities) }
         }
     }
 

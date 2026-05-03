@@ -24,7 +24,7 @@ class StudentRepositoryImpl(
                 close(error)
                 return@addSnapshotListener
             }
-            trySend(snapshot?.toObjects(Student::class.java) ?: emptyList())
+            trySend((snapshot?.toObjects(Student::class.java) ?: emptyList()).sortedBy { it.name.lowercase() })
         }
         awaitClose { listener.remove() }
     }
